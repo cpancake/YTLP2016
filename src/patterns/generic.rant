@@ -1,0 +1,21 @@
+{|(0.05)<name> <surname>'s} {
+	<noun> <noun-job> {|Extreme} |
+	<adj> <noun-animal> {|from {the|a} <place>} |
+	<emo> <noun-animal> |
+	<adj> {|<noun> }<place> |
+	<adj> <noun-job> |
+	<place> <noun-job> |
+	(0.1) <nonsense> <noun-job> |
+	<verbimg> <noun> |
+	(0.3) <timenoun-holiday> <noun-job> |
+	(0.1) [n:0;10] <timenoun-unit> <noun> |
+	(0.2) <quality.est> <noun> in the <place> |
+	<color> <noun> |
+	(0.25) {the <noun> from <country>|it came from <country>!} |
+	the {|(0.25)<em> }<adj> <noun> |
+	(0.25) <state> <verb.er> |
+	<noun-job>'s <noun> |
+	(0.001) {|bodacious|radical|hella|most excellent} <noun-drug> smoker {|extreme} |
+	(0.7) <verb.er> |
+	(0.5) <noun>
+}
