@@ -1,5 +1,6 @@
 package
 {
+	import com.animenight.igs.Comments;
 	import com.animenight.igs.components.EasyButton;
 	import com.animenight.igs.Patterns;
 	import com.animenight.igs.Player;
@@ -10,9 +11,11 @@ package
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
+	import flash.system.Capabilities;
 	import flash.text.Font;
-	import profiler.ProfilerConfig;
+	import com.torrunt.DeveloperConsole;
 
 	/**
 	 * ...
@@ -21,15 +24,34 @@ package
 	[Frame(factoryClass="Preloader")]
 	public class Main extends Sprite 
 	{
-		[Embed(source = "../resources/opensans.ttf", embedAsCFF = "false", fontFamily = "Open Sans")]
+		[Embed(
+			source = "../resources/opensans.ttf", 
+			embedAsCFF = "false", 
+			fontFamily = "Open Sans", 
+			fontName = "Open Sans")]
 		private static var _openSans:Class;
+		private static var _instance:Main;
+		private static var _traces:Array = [];
+		
+		private var _console:DeveloperConsole;
 		
 		public static var OpenSans:Font = new _openSans();
 		
 		public function Main() 
 		{
+			_instance = this;
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);
+		}
+		
+		public static function echo(msg:String):void
+		{
+			if (_instance == null || _instance._console == null)
+			{
+				_traces.push(msg);
+				return;
+			}
+			_instance._console.echo(msg);
 		}
 
 		private function init(e:Event = null):void 
@@ -38,23 +60,24 @@ package
 			var player:Player = new Player();
 			player.generateName();
 			
-			this.addChild(new GameScene(player));
-			/*ProfilerConfig.Width = this.stage.stageWidth;
-			ProfilerConfig.ShowMinMax = true;
-			this.addChild(StaticProfiler.GetInstance());
-			var btn = new EasyButton("image");
-			btn.x = 200;
-			btn.y = 200;
-			var img:Bitmap;
-			img = PosterGenerator.generatePoster(Util.toTitleCase(Patterns.Run("gameName")));
-			var that = this;
-			btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
-				that.removeChild(img);
-				img = PosterGenerator.generatePoster(Util.toTitleCase(Patterns.Run("gameName")));
-				that.addChild(img);
-			});
-			this.addChild(img);
-			this.addChild(btn);*/
+			var gameScene:GameScene = new GameScene(player);
+			this.addChild(gameScene);
+			
+			if (true)
+			{
+				_console = new DeveloperConsole(gameScene);
+				addChild(_console);
+				
+				stage.addEventListener(KeyboardEvent.KEY_UP, function(e:KeyboardEvent):void
+				{
+					if (e.keyCode == 192)
+						_console.toggle();
+				});
+				
+				_traces.forEach(function(m:String, _, __) {
+					Main.echo(m);
+				});
+			}
 		}
 
 	}

@@ -52,7 +52,8 @@ package com.animenight.igs.scenes
 			_tabBodyContainer.y = 60;
 			
 			_tabs = {
-				'Work': new WorkTab(_player),
+				'Player': new PlayerTab(_player),
+				'Videos': new VideoTab(_player),
 				'Games': new GamesTab(_player)
 			};
 			
@@ -69,6 +70,7 @@ package com.animenight.igs.scenes
 				});
 				value.addEventListener(MessageEvent.SHOW_MESSAGE, showBoxEvent);
 				value.addEventListener(MessageEvent.SHOW_CHOICE, showChoiceEvent);
+				value.addEventListener(MessageEvent.SHOW_INPUT, showChoiceEvent);
 			}
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
@@ -103,6 +105,7 @@ package com.animenight.igs.scenes
 			daysFormat.align = TextFormatAlign.LEFT;
 			
 			_daysLabel = new TextField();
+			_daysLabel.embedFonts = true;
 			_daysLabel.autoSize = TextFieldAutoSize.LEFT;
 			_daysLabel.defaultTextFormat = daysFormat;
 			_daysLabel.x = 10;
@@ -111,14 +114,14 @@ package com.animenight.igs.scenes
 			this.addChild(_daysLabel);
 			
 			_tabButtons = [
-				new TabButton('Work'), 
+				new TabButton('Player'), 
 				new TabButton('Videos'), 
 				new TabButton('Games'), 
-				new TabButton('Player')
+				new TabButton('Channel')
 			];
 			_tabButtons[0].active = true;
-			_tabBodyContainer.addChild(_tabs['Work']);
-			_currentTab = 'Work';
+			_tabBodyContainer.addChild(_tabs['Player']);
+			_currentTab = 'Player';
 			
 			for (var i = 0; i < _tabButtons.length; i++)
 			{
@@ -283,6 +286,9 @@ package com.animenight.igs.scenes
 			msgBox.addEventListener(KillMeEvent.KILL_ME, function(e:KillMeEvent):void {
 				that.removeChild(e.me);
 			});
+			msgBox.addEventListener(MessageChoiceEvent.CHOICE, function(_e:MessageChoiceEvent):void {
+				that.removeChild(msgBox);
+			});
 			this.addChild(msgBox);
 			
 			// make sure _blackBox is on top of all children
@@ -298,14 +304,49 @@ package com.animenight.igs.scenes
 		private function showChoiceEvent(e:MessageEvent):void
 		{
 			var that = this;
-			var messageBox:MessageBox = new MessageBox(e.title, e.message, e.buttons);
+			var messageBox:MessageBox = new MessageBox(e.title, e.message, e.buttons, e.type == MessageEvent.SHOW_INPUT);
+			messageBox.placeholder = e.placeholder;
 			messageBox.addEventListener(MessageChoiceEvent.CHOICE, function(_e:MessageChoiceEvent):void {
 				that.removeChild(messageBox);
 				var evt = _e.clone();
 				evt.choice = _e.choice;
-				e.receiver.dispatchEvent(evt);
+				evt.input = _e.input;
+				if(e.receiver)
+					e.receiver.dispatchEvent(evt);
 			});
 			this.addChild(messageBox);
+		}
+		
+		/*
+		 * Debugger functions
+		*/
+		public function dcash(money:int):void
+		{
+			_player.cash = money;
+			updateUI();
+		}
+		
+		public function dgame(aaa:Boolean):void
+		{
+			_player.games.generateGame(aaa, _player.daysPlayed, true);
+			var btn:TabButton = _tabButtons[2];
+			var num:Number;
+			if (btn.badge != "")
+			{
+				num = parseInt(btn.badge, 10);
+				if (num != NaN)
+					btn.badge = num + 1 + "";
+				else
+					btn.badge = "1";
+			}
+			else
+				btn.badge = "1";
+			updateUI();
+		}
+		
+		public function dgamepop(index:Number):Number
+		{
+			return _player.games.allGames[index].getPopularity(_player.daysPlayed);
 		}
 	}
 

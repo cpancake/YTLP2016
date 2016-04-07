@@ -126,6 +126,7 @@ package com.animenight.igs
 			var font:Font = randomFont();
 			var textField:EasyTextField = new EasyTextField("");
 			var words = title.split(" ");
+			textField.embedFonts = false;
 			textField.font = font.fontName;
 			textField.bold = true;
 			textField.size = 36;

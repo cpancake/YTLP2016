@@ -11,6 +11,7 @@ package com.animenight.igs.events
 		public static const CHOICE:String = "choice";
 		
 		public var choice:String = "";
+		public var input:String = "";
 		
 		public function MessageChoiceEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) 
 		{ 

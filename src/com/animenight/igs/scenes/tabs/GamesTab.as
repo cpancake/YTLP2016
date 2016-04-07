@@ -2,11 +2,16 @@ package com.animenight.igs.scenes.tabs
 {
 	import com.animenight.igs.components.EasyButton;
 	import com.animenight.igs.components.EasyTextField;
+	import com.animenight.igs.components.LineChart;
+	import com.animenight.igs.components.NewVideoBox;
 	import com.animenight.igs.data.Genres;
+	import com.animenight.igs.events.MessageChoiceEvent;
+	import com.animenight.igs.events.MessageEvent;
 	import com.animenight.igs.events.UIEvent;
 	import com.animenight.igs.Game;
 	import com.animenight.igs.Player;
 	import com.animenight.igs.Util;
+	import com.animenight.igs.VideoSeries;
 	import com.bit101.components.List;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
@@ -31,6 +36,8 @@ package com.animenight.igs.scenes.tabs
 		private var _daysAgo:EasyTextField;
 		private var _qualityLabel:EasyTextField;
 		private var _buyButton:EasyButton;
+		private var _videoButton:EasyButton;
+		private var _popChart:LineChart = null;
 		
 		[Embed(source="../../../../../../resources/star.png")]
 		private var _starClass:Class;
@@ -127,6 +134,11 @@ package com.animenight.igs.scenes.tabs
 			_buyButton.addEventListener(MouseEvent.CLICK, buyGame);
 			this.addChild(_buyButton);
 			
+			_videoButton = new EasyButton("Start Video Series");
+			_videoButton.x = 200;
+			_videoButton.addEventListener(MouseEvent.CLICK, makeVideo);
+			this.addChild(_videoButton);
+			
 			update();
 		}
 		
@@ -149,6 +161,44 @@ package com.animenight.igs.scenes.tabs
 			changeEvt.cashSource = "Game";
 			this.dispatchEvent(changeEvt);
 			this.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+		}
+		
+		private function makeVideo(e:MouseEvent):void
+		{
+			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_INPUT);
+			messageEvt.message = "Please enter the name for a new video series based on \"" + _currentGame.name + "\"";
+			messageEvt.title = "New Video";
+			messageEvt.buttons = [ "OK", "Cancel" ];
+			messageEvt.receiver = this;
+			var placeholder = "Let's Play " + _currentGame.name;
+			var num = 1;
+			while (_player.series.filter(function(v, _, __) { return v.name == placeholder; } ).length > 0)
+			{
+				placeholder = "Let's Play " + _currentGame.name + " " + Util.stringMult("Again", num);
+				num++;
+			}
+			messageEvt.placeholder = placeholder;
+			var that = this;
+			this.addEventListener(MessageChoiceEvent.CHOICE, function videoInput(e:MessageChoiceEvent):void {
+				that.removeEventListener(MessageChoiceEvent.CHOICE, videoInput);
+				if (e.choice == "Cancel") return;
+				
+				var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
+				if (Util.trim(e.input) == '')
+				{
+					evt.title = "Error";
+					evt.message = "You need to provide a name for your new series!";
+				}
+				else
+				{
+					_player.series.push(new VideoSeries(_currentGame, Util.trim(e.input)));
+					evt.title = "Series Created";
+					evt.message = "A new video series has been created. Head over to the videos tab to start the first video.";
+				}
+				that.dispatchEvent(evt);
+			});
+			
+			this.dispatchEvent(messageEvt);
 		}
 		
 		private function updateGame(game:Game):void
@@ -193,12 +243,17 @@ package com.animenight.igs.scenes.tabs
 			{
 				_buyButton.enabled = false;
 				_buyButton.alpha = 0;
+				_videoButton.y = _qualityLabel.y + _qualityLabel.height;
+				_videoButton.alpha = 1;
+				_videoButton.enabled = true;
 			}
 			else
 			{
 				_buyButton.alpha = 1;
 				_buyButton.y = _qualityLabel.y + _qualityLabel.height;
 				_buyButton.enabled = game.price <= _player.cash;
+				_videoButton.enabled = false;
+				_videoButton.alpha = 0;
 			}
 			
 			_currentGame = game;

@@ -21,12 +21,14 @@ package com.animenight.igs
 		public var creativity:Number = 0;
 		public var humor:Number = 0;
 		
+		public var workExperience:Number = 0;
 		public var workPerformance:Number = 100;
 		public var workedToday:Boolean = false;
 		public var workPosition:Number = 0;
 		public var hasJob:Boolean = true;
 		
 		public var games:Games = new Games();
+		public var series:Array = [];
 		
 		public function Player(name:String = 'Default') 
 		{

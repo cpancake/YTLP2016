@@ -17,5 +17,6 @@
 	<noun-job>'s <noun> |
 	(0.001) {|bodacious|radical|hella|most excellent} <noun-drug> smoker {|extreme} |
 	(0.7) <verb.er> |
-	(0.5) <noun>
+	(0.5) <noun> |
+	(0.1) {(0.5)<noun>|<noun-job>} Simulator 20[num:0;1][num:0;6]
 }

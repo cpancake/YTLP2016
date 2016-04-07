@@ -13,7 +13,7 @@ package com.animenight.igs.scenes.tabs
 	 * ...
 	 * @author Andrew Rogers
 	 */
-	public class WorkTab extends Sprite
+	public class PlayerTab extends Sprite
 	{
 		private var _player:Player;
 		
@@ -28,7 +28,7 @@ package com.animenight.igs.scenes.tabs
 		private var _getJobButton:EasyButton;
 		private var _noJobTitle:EasyTextField;
 		
-		public function WorkTab(player:Player) 
+		public function PlayerTab(player:Player) 
 		{
 			_player = player;
 			this.addEventListener(Event.ADDED_TO_STAGE, addToStage);

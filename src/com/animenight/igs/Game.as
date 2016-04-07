@@ -1,5 +1,6 @@
 package com.animenight.igs 
 {
+	import com.animenight.igs.components.LineChart;
 	import com.animenight.igs.data.Genres;
 	import flash.display.Bitmap;
 	/**
@@ -20,12 +21,26 @@ package com.animenight.igs
 		public var price:Number;
 		public var owned:Boolean = false;
 		
-		public function Game(name:String, isSequel:Boolean, sequelNumber:Number, tripleA:Boolean) 
+		private var _genreEffect:Number = Math.random();
+		private var _qualityEffect:Number = Math.random();
+		private var _genreEffectChance:Number = Math.random();
+		
+		public function Game(
+			name:String, 
+			isSequel:Boolean, 
+			sequelNumber:Number, 
+			tripleA:Boolean, 
+			dayReleased:Number, 
+			genre:String, 
+			quality:Number) 
 		{
 			this.name = name;
 			this.isSequel = isSequel;
 			this.number = sequelNumber;
 			this.tripleA = tripleA;
+			this.dayReleased = dayReleased;
+			this.genre = genre;
+			this.quality = quality;
 		}
 		
 		public function getPopularity(day:Number):Number
@@ -40,11 +55,11 @@ package com.animenight.igs
 			
 			// calculate genre effect on popularity
 			var popDifference:Number = Genres.OBJECT[genre].popularity - pop;
-			if (Math.random() < 0.8)
-				pop += Math.random() * popDifference;
+			if (_genreEffectChance < 0.8)
+				pop += _genreEffect * popDifference;
 				
 			// calculate the quality effect on popularity;
-			pop += Math.random() * quality - 2.5;
+			pop += _qualityEffect * quality - 2.5;
 			return Math.min(10, pop);
 		}
 		

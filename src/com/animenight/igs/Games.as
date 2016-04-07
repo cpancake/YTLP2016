@@ -15,7 +15,7 @@ package com.animenight.igs
 		
 		public function Games() 
 		{
-			for (var i = 0; i < 10; i++)
+			for (var i = 0; i < 15; i++)
 			{
 				var name = uniqueCompanyName();
 				bigCompanies.push(name);
@@ -37,6 +37,8 @@ package com.animenight.igs
 			for (var i = 0; i < 4; i++)
 				generateGame(Math.random() < 0.1, -(Math.floor(Math.random() * 20)), false);
 			generateGame(true, -(Math.floor(Math.random() * 20)), false);
+			
+			Util.randomArrayItem(allGames).owned = true;
 		}
 		
 		public function get allGames():Array
@@ -56,7 +58,7 @@ package com.animenight.igs
 			return true;
 		}
 		
-		private function generateGame(aaa:Boolean, day:Number, generateSequels:Boolean = true):void
+		public function generateGame(aaa:Boolean, day:Number, generateSequels:Boolean = true):void
 		{
 			var sequelRand:Number = Math.random();
 			if (generateSequels && sequelRand < 0.2 && ((aaa && bigGames.length > 0) || (!aaa && indieGames.length > 0)))
@@ -65,13 +67,12 @@ package com.animenight.igs
 					return;
 			}
 			
-			var name = Util.toTitleCase(Patterns.Run("gameName"));
-			var game:Game = new Game(name, false, 1, aaa);
+			var name = Util.trim(Util.toTitleCase(Patterns.Run("gameName")));
+			var company:String = randomCompany(aaa);
+			var game:Game = new Game(name, false, 1, aaa, day, randomGenre(), calculateGameQuality(company));
+			game.company = company;
 			game.genre = randomGenre();
-			game.dayReleased = day;
 			game.poster = PosterGenerator.generatePoster(game.name);
-			game.company = randomCompany(aaa);
-			game.quality = calculateGameQuality(game);
 			game.price = generatePrice(game);
 			if (aaa)
 				bigGames.push(game);
@@ -102,12 +103,11 @@ package com.animenight.igs
 			}
 			else
 				name += Patterns.Run("gameSequel");
-			var game:Game = new Game(Util.toTitleCase(name), true, number, aaa);
-			game.genre = (Math.random() > 0.9 ? randomGenre() : randomGame.genre);
-			game.company = (Math.random() > 0.95 ? randomCompany(aaa) : randomGame.company);
-			game.dayReleased = day;
+			var genre:String = (Math.random() > 0.9 ? randomGenre() : randomGame.genre);
+			var company:String = (Math.random() > 0.95 ? randomCompany(aaa) : randomGame.company);
+			var game:Game = new Game(Util.trim(Util.toTitleCase(name)), true, number, aaa, day, genre, calculateGameQuality(company));
+			game.company = company;
 			game.poster = PosterGenerator.generatePoster(game.name);
-			game.quality = calculateGameQuality(game);
 			game.price = generatePrice(game);
 			if (aaa)
 				bigGames.push(game);
@@ -151,14 +151,14 @@ package com.animenight.igs
 			return Util.trim(name);
 		}
 		
-		private function calculateGameQuality(game:Game):Number
+		private function calculateGameQuality(company:String):Number
 		{
 			// calculate quality
 			var rand = Math.random();
 			var quality:Number = 12.1429 * rand - 7.14286 * Math.pow(rand, 2);
 			
 			// calculate company influence on quality
-			var qualityDiff = companyQualities[game.company] - quality;
+			var qualityDiff = companyQualities[company] - quality;
 			quality += Math.random() * qualityDiff;
 			
 			return quality;

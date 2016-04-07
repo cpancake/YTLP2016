@@ -1,5 +1,6 @@
 package
 {
+	import com.animenight.igs.components.EasyTextField;
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.StageAlign;
@@ -15,6 +16,7 @@ package
 	 */
 	public class Preloader extends MovieClip 
 	{
+		private var _loader:EasyTextField;
 		
 		public function Preloader() 
 		{
@@ -26,7 +28,10 @@ package
 			loaderInfo.addEventListener(ProgressEvent.PROGRESS, progress);
 			loaderInfo.addEventListener(IOErrorEvent.IO_ERROR, ioError);
 			
-			// TODO show loader
+			addEventListener(Event.ADDED_TO_STAGE, function(e:Event) {
+				_loader = new EasyTextField("0/0 bytes loaded");
+				addChild(_loader);
+			});
 		}
 		
 		private function ioError(e:IOErrorEvent):void 
@@ -36,7 +41,7 @@ package
 		
 		private function progress(e:ProgressEvent):void 
 		{
-			// TODO update loader
+			_loader.text = e.bytesLoaded + "/" + e.bytesTotal + " bytes loaded";
 		}
 		
 		private function checkFrame(e:Event):void 
@@ -54,15 +59,14 @@ package
 			loaderInfo.removeEventListener(ProgressEvent.PROGRESS, progress);
 			loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, ioError);
 			
-			// TODO hide loader
-			
 			startup();
 		}
 		
 		private function startup():void 
 		{
-			var mainClass:Class = getDefinitionByName("Main") as Class;
-			addChild(new mainClass() as DisplayObject);
+			removeChild(_loader);
+			
+			addChild(new Main() as DisplayObject);
 		}
 		
 	}

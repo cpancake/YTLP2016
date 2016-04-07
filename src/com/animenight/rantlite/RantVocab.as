@@ -1,6 +1,8 @@
 package com.animenight.rantlite 
 {
+	import flash.net.FileReference;
 	import flash.utils.ByteArray;
+	import flash.utils.CompressionAlgorithm;
 	import flash.utils.Endian;
 	import com.probertson.utils.GZIPBytesEncoder;
 	/**
@@ -47,6 +49,7 @@ package com.animenight.rantlite
 				_patterns[name] = code;
 			}
 			
+			Main.echo(numTables.toString());
 			_dictionaries = { };
 			for (var i = 0; i < numTables; i++)
 			{
@@ -93,7 +96,14 @@ package com.animenight.rantlite
 		{
 			var length:uint = buffer.readUnsignedInt();
 			if (length == 0) return "";
-			return buffer.readMultiByte(length, "utf-16");
+			//return buffer.readMultiByte(length, "unicode");
+			// https://bugs.chromium.org/p/chromium/issues/detail?id=176668
+			var data:String = "";
+			for (var i:int = 0; i < length / 2; i++) 
+			{
+				data += String.fromCharCode(buffer.readUnsignedShort());
+			}
+			return data;
 		}
 		
 		private function readStringArray(buffer:ByteArray):Array

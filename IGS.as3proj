@@ -12,7 +12,7 @@
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
     <movie background="#FFFFFF" />
-    <movie preferredSDK="AIR 19.0.0;19.0.0;" />
+    <movie preferredSDK="AIR 21.0.0;21.0.0;" />
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
@@ -21,7 +21,7 @@
   <!-- Build options -->
   <build>
     <option accessible="False" />
-    <option advancedTelemetry="True" />
+    <option advancedTelemetry="False" />
     <option allowSourcePathOverlap="False" />
     <option benchmark="False" />
     <option es="False" />
@@ -53,9 +53,8 @@
   </includeLibraries>
   <!-- SWC Libraries -->
   <libraryPaths>
-    <element path="lib\feathers.swc" />
-    <element path="lib\starling.swc" />
     <element path="lib\MinimalComps_0_9_10.swc" />
+    <element path="" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
@@ -75,7 +74,7 @@
   </library>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="src\Main.as" />
+    <compile path="src\Preloader.as" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
@@ -89,7 +88,7 @@
   <options>
     <option showHiddenPaths="False" />
     <option testMovie="Default" />
-    <option testMovieCommand="" />
+    <option testMovieCommand="bin/index.html" />
   </options>
   <!-- Plugin storage -->
   <storage />

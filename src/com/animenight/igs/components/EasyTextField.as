@@ -21,6 +21,7 @@ package com.animenight.igs.components
 			_format = new TextFormat('Open Sans', 14, 0x000000, false);
 			_format.align = TextFormatAlign.LEFT;
 			
+			this.embedFonts = true;
 			this.autoSize = TextFieldAutoSize.LEFT;
 			this.defaultTextFormat = _format;
 			this.x = 0;

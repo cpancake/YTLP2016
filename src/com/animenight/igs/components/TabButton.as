@@ -107,6 +107,7 @@ package com.animenight.igs.components
 			textFormat.align = TextFormatAlign.CENTER;
 			
 			_label = new TextField();
+			_label.embedFonts = true;
 			_label.autoSize = TextFieldAutoSize.CENTER;
 			_label.defaultTextFormat = textFormat;
 			_label.text = text;

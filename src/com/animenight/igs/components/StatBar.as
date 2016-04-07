@@ -26,6 +26,7 @@ package com.animenight.igs.components
 		private var _cashLabel:TextField;
 		private var _timeLabel:EasyTextField;
 		private var _nextDayLabel:EasyTextField;
+		private var _subsLabel:EasyTextField;
 		private var _warnFilter:DropShadowFilter;
 		private var _warnTimer:Number = 100;
 		
@@ -35,6 +36,14 @@ package com.animenight.igs.components
 			_playButton = new _playButtonClass();
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
+			this.addEventListener(MouseEvent.MOUSE_OVER, function(e:MouseEvent):void
+			{
+				drawBackground(0xffffaa);
+			});
+			this.addEventListener(MouseEvent.MOUSE_OUT, function(e:MouseEvent):void
+			{
+				drawBackground(0xffffff);
+			});
 			
 			this.mouseEnabled = true;
 			this.useHandCursor = true;
@@ -45,8 +54,10 @@ package com.animenight.igs.components
 		public function update():void
 		{
 			_cashLabel.text = '$' + Util.formatNumber(_player.cash);
+			_subsLabel.text = _player.subs + " Subscribers";
+			_subsLabel.x = this.stage.stageWidth - 30 - _cashLabel.textWidth - _subsLabel.textWidth;
 			_timeLabel.text = Util.formatTime(8 + (16 - _player.hoursLeft));
-			_timeLabel.x = this.stage.stageWidth - 30 - _cashLabel.textWidth - _timeLabel.textWidth;
+			_timeLabel.x = _subsLabel.x - 30 - _timeLabel.textWidth;
 			_timeLabel.update();
 		}
 		
@@ -70,15 +81,20 @@ package com.animenight.igs.components
 			this.addEventListener(Event.ENTER_FRAME, checkWarnShadow);
 		}
 		
+		private function drawBackground(color:uint):void
+		{
+			_bgRect.graphics.beginFill(color);
+			_bgRect.graphics.drawRect(0, 1, width, 30);
+			_bgRect.graphics.endFill();
+		}
+		
 		private function addedToStage(e:Event):void
 		{
 			var width:int = this.stage.stageWidth;
 			var barHeight:int = 30;
 			
 			_bgRect = new Shape();
-			_bgRect.graphics.beginFill(0xffffff);
-			_bgRect.graphics.drawRect(0, 1, width, barHeight);
-			_bgRect.graphics.endFill();
+			drawBackground(0xffffff);
 			_bgRect.graphics.beginFill(0x000000);
 			_bgRect.graphics.drawRect(0, 0, width, 1);
 			_bgRect.graphics.endFill();
@@ -90,6 +106,7 @@ package com.animenight.igs.components
 			cashLabelFormat.align = TextFieldAutoSize.RIGHT;
 			
 			_cashLabel = new TextField();
+			_cashLabel.embedFonts = true;
 			_cashLabel.autoSize = TextFieldAutoSize.RIGHT;
 			_cashLabel.defaultTextFormat = cashLabelFormat;
 			_cashLabel.y = this.stage.stageHeight - 27;
@@ -105,6 +122,15 @@ package com.animenight.igs.components
 			_timeLabel.autoSize = TextFieldAutoSize.RIGHT;
 			_timeLabel.update();
 			this.addChild(_timeLabel);
+			
+			_subsLabel = new EasyTextField("0 Subscribers");
+			_subsLabel.y = _timeLabel.y;
+			_subsLabel.bold = true;
+			_subsLabel.size = 16;
+			_subsLabel.alignment = TextFormatAlign.RIGHT;
+			_subsLabel.autoSize = TextFieldAutoSize.RIGHT;
+			_subsLabel.update();
+			this.addChild(_subsLabel);
 			
 			_playButton.x = 0;
 			_playButton.y = _bgRect.y + 1;

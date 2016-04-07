@@ -65,6 +65,28 @@ package com.animenight.igs
 			return daysAgo + " days ago";
 		}
 		
+		public static function objectKeys(obj:Object):Array
+		{
+			var keys = [];
+			for (var k in obj)
+				keys.push(k);
+			return keys;
+		}
+		
+		public static function shuffle(o:Array):Array
+		{
+			for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+			return o;
+		}
+		
+		public static function stringMult(s:String, m:Number):String
+		{
+			var a:Array = [];
+			for (var i = 0; i < m; i++)
+				a.push(s);
+			return a.join(" ");
+		}
+		
 		[Inline]
 		public static function randomSeed():Number
 		{
@@ -95,7 +117,7 @@ package com.animenight.igs
 			return (color >> 8) & 0xff;
 		}
 		
-		[inline]
+		[Inline]
 		public static function blue(color:uint):uint
 		{
 			return color & 0xff;
