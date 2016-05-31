@@ -6,10 +6,12 @@ package com.animenight.igs.scenes
 	import com.animenight.igs.events.KillMeEvent;
 	import com.animenight.igs.events.MessageChoiceEvent;
 	import com.animenight.igs.events.MessageEvent;
+	import com.animenight.igs.events.NewVideoEvent;
 	import com.animenight.igs.events.UIEvent;
 	import com.animenight.igs.scenes.tabs.*;
 	import com.animenight.igs.components.StatBar;
 	import com.animenight.igs.components.TabButton;
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
 	import flash.display.Sprite;
@@ -38,9 +40,15 @@ package com.animenight.igs.scenes
 		
 		private var _changeIndicators:Array = [];
 		
+		private static var _staticPlayer:Player;
+		public static function get player():Player
+		{
+			return _staticPlayer;
+		}
+		
 		public function GameScene(player:Player) 
 		{
-			_player = player;
+			_staticPlayer = _player = player;
 			this.mouseChildren = true;
 			var that = this;
 			
@@ -54,7 +62,8 @@ package com.animenight.igs.scenes
 			_tabs = {
 				'Player': new PlayerTab(_player),
 				'Videos': new VideoTab(_player),
-				'Games': new GamesTab(_player)
+				'Games': new GamesTab(_player),
+				'Community': new CommunityTab(_player)
 			};
 			
 			for (var id:String in _tabs)
@@ -71,6 +80,12 @@ package com.animenight.igs.scenes
 				value.addEventListener(MessageEvent.SHOW_MESSAGE, showBoxEvent);
 				value.addEventListener(MessageEvent.SHOW_CHOICE, showChoiceEvent);
 				value.addEventListener(MessageEvent.SHOW_INPUT, showChoiceEvent);
+				value.addEventListener(NewVideoEvent.NEW_VIDEO, function(e:NewVideoEvent) {
+					_tabs["Videos"].newVideo(e.video);
+				});
+				value.addEventListener(NewVideoEvent.NEW_VIDEO_SERIES, function(e:NewVideoEvent) {
+					_tabs["Videos"].newVideoSeries(e.videoSeries);
+				});
 			}
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
@@ -117,7 +132,7 @@ package com.animenight.igs.scenes
 				new TabButton('Player'), 
 				new TabButton('Videos'), 
 				new TabButton('Games'), 
-				new TabButton('Channel')
+				new TabButton('Community')
 			];
 			_tabButtons[0].active = true;
 			_tabBodyContainer.addChild(_tabs['Player']);
@@ -170,56 +185,7 @@ package com.animenight.igs.scenes
 					_blackBox.alpha += 0.05;
 					if (_blackBox.alpha >= 1)
 					{
-						// actually do next day stuff
-						_player.daysPlayed++;
-						_player.hoursLeft = _player.HOURS_AVAILABLE;
-						if (_player.hasJob)
-						{
-							if (_player.workedToday == false)
-								_player.workPerformance -= _player.jobPerformanceDecrease();
-							_player.workedToday = false;
-							// you're fired!
-							if (_player.workPerformance <= 0)
-							{
-								_player.hasJob = false;
-								_player.workPerformance = 100;
-								_player.workPosition = 0;
-								showMessage("Fired!", "Due to your poor work performance, you've been fired!");
-							}
-						}
-						// rent
-						if (_player.daysPlayed > 1 && (_player.daysPlayed + 1) % 7 == 0)
-						{
-							_player.cash -= _player.rentPrice;
-							addCashChangeIndicator( -_player.rentPrice, "Rent");
-							
-							if (_player.cash < 0)
-							{
-								showMessage("You Need Cash!", "You're low on cash. If you get below $-100, you'll go bankrupt!");
-							}
-							if (_player.cash < -100)
-							{
-								showMessage("Game Over!", "It's over bud.");
-							}
-						}
-						// release new game
-						if (_player.games.hasNewGame(_player.daysPlayed))
-						{
-							var btn:TabButton = _tabButtons[2];
-							var num:Number;
-							if (btn.badge != "")
-							{
-								num = parseInt(btn.badge, 10);
-								if (num != NaN)
-									btn.badge = num + 1 + "";
-								else
-									btn.badge = "1";
-							}
-							else
-								btn.badge = "1";
-						}
-						updateUI();
-						
+						processNextDay();
 						goingUp = false;
 					}
 				}
@@ -236,6 +202,76 @@ package com.animenight.igs.scenes
 			}
 			
 			this.addEventListener(Event.ENTER_FRAME, fadeBlackBox);
+		}
+		
+		private function processNextDay():void
+		{
+			// actually do next day stuff
+			_player.daysPlayed++;
+			_player.hoursLeft = _player.HOURS_AVAILABLE;
+			if (_player.hasJob)
+			{
+				if (_player.workedToday == false)
+					_player.workPerformance -= _player.jobPerformanceDecrease();
+				_player.workedToday = false;
+				// you're fired!
+				if (_player.workPerformance <= 0)
+				{
+					_player.hasJob = false;
+					_player.workPerformance = 100;
+					_player.workPosition = 0;
+					showMessage("Fired!", "Due to your poor work performance, you've been fired!");
+				}
+			}
+			// rent
+			if (_player.daysPlayed > 1 && (_player.daysPlayed + 1) % 7 == 0)
+			{
+				_player.cash -= _player.rentPrice;
+				addCashChangeIndicator( -_player.rentPrice, "Rent");
+				
+				if (_player.cash < 0)
+				{
+					showMessage("You Need Cash!", "You're low on cash. If you get below $-100, you'll go bankrupt!");
+				}
+				if (_player.cash < -100)
+				{
+					showMessage("Game Over!", "It's over bud.");
+				}
+			}
+			// release new game
+			if (_player.games.hasNewGame(_player.daysPlayed))
+			{
+				var btn:TabButton = _tabButtons[2];
+				var num:Number;
+				if (btn.badge != "")
+				{
+					num = parseInt(btn.badge, 10);
+					if (num != NaN)
+						btn.badge = num + 1 + "";
+					else
+						btn.badge = "1";
+				}
+				else
+					btn.badge = "1";
+			}
+			var prevSubs:Number = _player.subs;
+			
+			// calculate videos
+			var videoIncome:Number = 0;
+			var newViews:Number = 0;
+			_player.videoProjects.forEach(function(v:VideoProject, _, __) {
+				var videoViews:Number = v.views;
+				videoIncome += v.calculateDay(_player);
+				newViews += v.views - videoViews;
+			});
+			if(videoIncome > 0)
+				addCashChangeIndicator(videoIncome, "Video Income");
+			
+			var newSubs:Number = _player.subs - prevSubs;
+			_player.viewHistory.push(newViews);
+			_player.subscriberHistory.push(newSubs);
+				
+			updateUI();
 		}
 		
 		private function addCashChangeIndicator(cashAmount:Number, cashSource:String):void
@@ -347,6 +383,28 @@ package com.animenight.igs.scenes
 		public function dgamepop(index:Number):Number
 		{
 			return _player.games.allGames[index].getPopularity(_player.daysPlayed);
+		}
+		
+		public function dvideo():void
+		{
+			var project:VideoProject = new VideoProject(false, "Test Video", _player.games.allGames[0]);
+			project.id = Util.generateUniqueId(_player);
+			project.day = _player.daysPlayed;
+			_player.videoProjects.push(project);
+			
+			_tabs["Videos"].newVideo(project);
+		}
+		
+		public function dthumb(isLP:Boolean, number:Number = 1):void
+		{
+			var thumb:Bitmap = ThumbnailGenerator.generateThumbnail(isLP, number);
+			thumb.y = 300;
+			this.addChild(thumb);
+		}
+		
+		public function dmodel():String
+		{
+			return JSON.stringify(player.viewerModel);
 		}
 	}
 

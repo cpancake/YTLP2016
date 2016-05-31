@@ -125,13 +125,7 @@ package com.animenight.igs.components
 			if (active)
 				color = 0xeeeeee;
 			_bg.graphics.clear();
-			_bg.graphics.beginFill(color);
-			_bg.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-			_bg.graphics.endFill();
-			_bg.graphics.beginFill(0x000000, 0);
-			_bg.graphics.lineStyle(1, 0x000000);
-			_bg.graphics.drawRect(0, 0, WIDTH, HEIGHT);
-			_bg.graphics.endFill();
+			GraphicsExtensions.drawBorderedRect(_bg.graphics, 0, 0, WIDTH, HEIGHT, 0x000000, color);
 		}
 	}
 

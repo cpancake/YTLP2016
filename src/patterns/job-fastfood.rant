@@ -1,0 +1,7 @@
+{
+	<noun-food> {Hut|House|Bell|King}|
+	House of <noun-food.s>|
+	Mc^<name>|
+	<name>'s <noun-food.s>|
+	<name>'s
+}

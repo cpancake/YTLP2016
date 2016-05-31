@@ -1,6 +1,8 @@
 package com.animenight.igs 
 {
 	import com.animenight.igs.data.Jobs;
+	import com.animenight.igs.data.Upgrades;
+	import flash.media.Video;
 	/**
 	 * Player class.
 	 * @author Andrew Rogers
@@ -17,9 +19,11 @@ package com.animenight.igs
 		
 		public var rentPrice:Number = 80;
 		
-		public var intelligence:Number = 0;
-		public var creativity:Number = 0;
-		public var humor:Number = 0;
+		public var recordExperience:Number = 0;
+		public var editExperience:Number = 0;
+		
+		public var recordUpgrade:Number = 0;
+		public var editUpgrade:Number = 0;
 		
 		public var workExperience:Number = 0;
 		public var workPerformance:Number = 100;
@@ -29,6 +33,19 @@ package com.animenight.igs
 		
 		public var games:Games = new Games();
 		public var series:Array = [];
+		public var videoProjects:Array = [];
+		
+		public var subscriberHistory:RollingArray = new RollingArray(7, [0,0,0,0,0,0,0]);
+		public var viewHistory:RollingArray = new RollingArray(7, [0,0,0,0,0,0,0]);
+		
+		public var viewerModel:Object = {
+			'children': 1/6,
+			'teens': 1/6,
+			'young_adults': 1 / 6,
+			'adults': 1 / 6,
+			'middle_aged': 1 / 6,
+			'elderly': 1 / 6
+		};
 		
 		public function Player(name:String = 'Default') 
 		{
@@ -42,7 +59,17 @@ package com.animenight.igs
 		
 		public function get currentJob():Object
 		{
-			return Jobs.Positions[workPosition];
+			return Jobs.FastFoodPositions[workPosition];
+		}
+		
+		public function get recordMult():Number
+		{
+			return Upgrades.RecordingUpgrades[recordUpgrade].mult;
+		}
+		
+		public function get editMult():Number
+		{
+			return Upgrades.EditingUpgrades[editUpgrade].mult;
 		}
 		
 		public function jobPerformanceIncrease():Number

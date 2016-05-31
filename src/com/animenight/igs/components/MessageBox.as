@@ -1,5 +1,6 @@
 package com.animenight.igs.components 
 {
+	import com.animenight.igs.GraphicsExtensions;
 	import com.animenight.igs.events.KillMeEvent;
 	import com.animenight.igs.events.MessageChoiceEvent;
 	import flash.events.MouseEvent;
@@ -124,13 +125,7 @@ package com.animenight.igs.components
 			
 			var yPos:Number = stage.stageHeight / 2 - totalHeightSoFar / 2;
 			
-			boxSprite.graphics.beginFill(0x000000);
-			boxSprite.graphics.drawRect(xPos, yPos, width, totalHeightSoFar);
-			boxSprite.graphics.endFill();
-			
-			boxSprite.graphics.beginFill(0xffffff);
-			boxSprite.graphics.drawRect(xPos + 1, yPos + 1, width - 2, totalHeightSoFar - 2);
-			boxSprite.graphics.endFill();
+			GraphicsExtensions.drawBorderedRect(boxSprite.graphics, xPos, yPos, width, totalHeightSoFar, 0x000000, 0xffffff);
 			
 			boxSprite.graphics.beginFill(0x999999);
 			boxSprite.graphics.drawRect(xPos + 1, yPos + 1, width - 2, 30);

@@ -20,6 +20,8 @@ package com.animenight.igs
 		public var poster:Bitmap;
 		public var price:Number;
 		public var owned:Boolean = false;
+		public var reviewed:Boolean = false;
+		public var lped:Boolean = false;
 		
 		private var _genreEffect:Number = Math.random();
 		private var _qualityEffect:Number = Math.random();
@@ -46,12 +48,7 @@ package com.animenight.igs
 		public function getPopularity(day:Number):Number
 		{
 			var daysSinceRelease = day - dayReleased;
-			// quintic regression of {0, 0}, {3, 10}, {4, 10}, {8, 8}, {14, 0}
-			var pop:Number = 
-				-0.006 * Math.pow(daysSinceRelease, 4) + 
-				0.188258 * Math.pow(daysSinceRelease, 3) -
-				1.91288 * Math.pow(daysSinceRelease, 2) +
-				7.55152 * daysSinceRelease;
+			var pop:Number = (daysSinceRelease < 5 ? Math.sqrt(daysSinceRelease) * 5 : -0.1 * Math.pow(daysSinceRelease - 4, 2) + 10);
 			
 			// calculate genre effect on popularity
 			var popDifference:Number = Genres.OBJECT[genre].popularity - pop;
@@ -60,12 +57,7 @@ package com.animenight.igs
 				
 			// calculate the quality effect on popularity;
 			pop += _qualityEffect * quality - 2.5;
-			return Math.min(10, pop);
-		}
-		
-		public function getSaturation(day:Number):Number
-		{
-			return getPopularity(day + 1);
+			return Math.max(1, Math.min(10, pop));
 		}
 	}
 

@@ -208,15 +208,15 @@ package com.animenight.igs.scenes.tabs
 			}
 			_player.hoursLeft -= 8;
 			_player.workedToday = true;
-			_player.cash += _player.currentJob.pay;
+			_player.cash += (_player.currentJob.pay * 8);
 			
 			var evt:UIEvent = new UIEvent(UIEvent.CASH_CHANGE);
-			evt.cashAmount = _player.currentJob.pay;
+			evt.cashAmount = (_player.currentJob.pay * 8);
 			evt.cashSource = "Work";
 			_player.workPerformance += _player.jobPerformanceIncrease();
 			if (_player.workPerformance >= 200)
 			{
-				if (Jobs.Positions.length <= _player.workPosition + 1)
+				if (Jobs.FastFoodPositions.length <= _player.workPosition + 1)
 					_player.workPerformance = 200;
 				else
 				{
@@ -226,7 +226,7 @@ package com.animenight.igs.scenes.tabs
 					msgEvt.title = "Promoted!";
 					msgEvt.message = "Your performance at work has earned you a promotion!\n";
 					msgEvt.message += "You are now a " + _player.currentJob.name;
-					msgEvt.message += ", with a salary of $" + _player.currentJob.pay + ".";
+					msgEvt.message += ", with a salary of $" + _player.currentJob.pay + " an hour.";
 					this.dispatchEvent(msgEvt);
 				}
 			}

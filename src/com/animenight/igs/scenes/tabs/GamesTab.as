@@ -1,5 +1,7 @@
 package com.animenight.igs.scenes.tabs 
 {
+	import com.animenight.igs.REVIEW_VIDEO_TYPE;
+	import com.animenight.igs.VideoProject;
 	import com.animenight.igs.components.EasyButton;
 	import com.animenight.igs.components.EasyTextField;
 	import com.animenight.igs.components.LineChart;
@@ -7,11 +9,14 @@ package com.animenight.igs.scenes.tabs
 	import com.animenight.igs.data.Genres;
 	import com.animenight.igs.events.MessageChoiceEvent;
 	import com.animenight.igs.events.MessageEvent;
+	import com.animenight.igs.events.NewVideoEvent;
 	import com.animenight.igs.events.UIEvent;
 	import com.animenight.igs.Game;
 	import com.animenight.igs.Player;
 	import com.animenight.igs.Util;
 	import com.animenight.igs.VideoSeries;
+	import com.animenight.igs.VideoProject;
+	import com.animenight.igs.scenes.GameScene;
 	import com.bit101.components.List;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
@@ -36,6 +41,7 @@ package com.animenight.igs.scenes.tabs
 		private var _daysAgo:EasyTextField;
 		private var _qualityLabel:EasyTextField;
 		private var _buyButton:EasyButton;
+		private var _reviewButton:EasyButton;
 		private var _videoButton:EasyButton;
 		private var _popChart:LineChart = null;
 		
@@ -134,8 +140,13 @@ package com.animenight.igs.scenes.tabs
 			_buyButton.addEventListener(MouseEvent.CLICK, buyGame);
 			this.addChild(_buyButton);
 			
-			_videoButton = new EasyButton("Start Video Series");
-			_videoButton.x = 200;
+			_reviewButton = new EasyButton("Start Review");
+			_reviewButton.x = 200;
+			_reviewButton.addEventListener(MouseEvent.CLICK, makeReview);
+			this.addChild(_reviewButton);
+			
+			_videoButton = new EasyButton("Start LP Series");
+			_videoButton.x = _reviewButton.x + _reviewButton.width + 10;
 			_videoButton.addEventListener(MouseEvent.CLICK, makeVideo);
 			this.addChild(_videoButton);
 			
@@ -161,6 +172,46 @@ package com.animenight.igs.scenes.tabs
 			changeEvt.cashSource = "Game";
 			this.dispatchEvent(changeEvt);
 			this.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+		}
+		
+		private function makeReview(e:MouseEvent):void
+		{
+			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_INPUT);
+			messageEvt.message = "Please enter the name for your review of \"" + _currentGame.name + "\"";
+			messageEvt.title = "New Review";
+			messageEvt.buttons = [ "OK", "Cancel" ];
+			messageEvt.receiver = this;
+			var name = _currentGame.name + " Review";
+			messageEvt.placeholder = name;
+			var that:GamesTab = this;
+			this.addEventListener(MessageChoiceEvent.CHOICE, function reviewInput(e:MessageChoiceEvent):void {
+				that.removeEventListener(MessageChoiceEvent.CHOICE, reviewInput);
+				if (e.choice == "Cancel") return;
+				var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
+				if (Util.trim(e.input) == '')
+				{
+					evt.title = "Error";
+					evt.message = "You need to provide a name for your review!";
+				}
+				else
+				{
+					var video:VideoProject = new VideoProject(true, Util.trim(e.input), _currentGame);
+					video.id = Util.generateUniqueId(_player);
+					video.day = GameScene.player.daysPlayed;
+					_player.videoProjects.push(video);
+					evt.title = "Review Started";
+					evt.message = "You've started on your review! Head over to the Videos tab to work on it.";
+				
+					var videoEvt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.NEW_VIDEO);
+					videoEvt.video = video;
+					that.dispatchEvent(videoEvt);
+					
+					_currentGame.reviewed = true;
+					_reviewButton.enabled = false;
+				}
+				that.dispatchEvent(evt);
+			});
+			this.dispatchEvent(messageEvt);
 		}
 		
 		private function makeVideo(e:MouseEvent):void
@@ -191,9 +242,20 @@ package com.animenight.igs.scenes.tabs
 				}
 				else
 				{
-					_player.series.push(new VideoSeries(_currentGame, Util.trim(e.input)));
+					var series:VideoProject = new VideoProject(false, Util.trim(e.input), _currentGame);
+					series.isSeries = true;
+					series.day = _player.daysPlayed;
+					series.id = Util.generateUniqueId(_player);
+					_player.series.push(series);
 					evt.title = "Series Created";
-					evt.message = "A new video series has been created. Head over to the videos tab to start the first video.";
+					evt.message = "A new video series has been created. Head over to the Videos tab to start the first video.";
+					
+					var videoEvt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.NEW_VIDEO_SERIES);
+					videoEvt.videoSeries = series;
+					that.dispatchEvent(videoEvt);
+					
+					_currentGame.lped = true;
+					_videoButton.enabled = false;
 				}
 				that.dispatchEvent(evt);
 			});
@@ -246,6 +308,10 @@ package com.animenight.igs.scenes.tabs
 				_videoButton.y = _qualityLabel.y + _qualityLabel.height;
 				_videoButton.alpha = 1;
 				_videoButton.enabled = true;
+				_reviewButton.y = _videoButton.y;
+				_reviewButton.alpha = 1;
+				_reviewButton.enabled = !game.reviewed;
+				_videoButton.enabled = !game.lped;
 			}
 			else
 			{
@@ -254,6 +320,8 @@ package com.animenight.igs.scenes.tabs
 				_buyButton.enabled = game.price <= _player.cash;
 				_videoButton.enabled = false;
 				_videoButton.alpha = 0;
+				_reviewButton.alpha = 0;
+				_reviewButton.enabled = false;
 			}
 			
 			_currentGame = game;

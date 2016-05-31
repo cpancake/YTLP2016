@@ -4,7 +4,7 @@ package com.animenight.igs.data
 	 * ...
 	 * @author Andrew Rogers
 	 */
-	public class PosterSeeds 
+	public class PosterSeeds
 	{
 		[Embed(source="../../../../../resources/procgen/0.jpg")] private static var image0:Class;
 		[Embed(source="../../../../../resources/procgen/1.jpg")] private static var image1:Class;

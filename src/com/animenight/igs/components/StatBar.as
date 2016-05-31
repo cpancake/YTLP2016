@@ -53,7 +53,7 @@ package com.animenight.igs.components
 		
 		public function update():void
 		{
-			_cashLabel.text = '$' + Util.formatNumber(_player.cash);
+			_cashLabel.text = '$' + Util.formatMoney(_player.cash);
 			_subsLabel.text = _player.subs + " Subscribers";
 			_subsLabel.x = this.stage.stageWidth - 30 - _cashLabel.textWidth - _subsLabel.textWidth;
 			_timeLabel.text = Util.formatTime(8 + (16 - _player.hoursLeft));

@@ -30,7 +30,7 @@ package com.animenight.igs.data
 					'teens': 10,
 					'young_adults': 7,
 					'adults': 3,
-					'middle_aged': 0,
+					'middle_aged': -1,
 					'elderly': -5
 				}
 			},
@@ -43,7 +43,7 @@ package com.animenight.igs.data
 					'young_adults': 6,
 					'adults': 8,
 					'middle_aged': 4,
-					'elderly': 2
+					'elderly': -3
 				}
 			},
 			'fighting': {
@@ -55,7 +55,7 @@ package com.animenight.igs.data
 					'young_adults': 7,
 					'adults': 3,
 					'middle_aged': 3,
-					'elderly': 0
+					'elderly': -4
 				}
 			},
 			'puzzle': {
@@ -63,7 +63,7 @@ package com.animenight.igs.data
 				popularity: 5,
 				age_popularity: {
 					'children': -5,
-					'teens': 0,
+					'teens': -1,
 					'young_adults': 2,
 					'adults': 5,
 					'middle_aged': 7,
@@ -74,7 +74,7 @@ package com.animenight.igs.data
 				name: 'Real-time Strategy',
 				popularity: 4,
 				age_popularity: {
-					'children': 0,
+					'children': -2,
 					'teens': 1,
 					'young_adults': 3,
 					'adults': 7,
@@ -87,11 +87,11 @@ package com.animenight.igs.data
 				popularity: 6,
 				age_popularity: {
 					'children': 2,
-					'teens': 0,
+					'teens': -2,
 					'young_adults': -4,
 					'adults': 5,
 					'middle_aged': 8,
-					'elderly': 6
+					'elderly': 2
 				}
 			},
 			'sports': {
@@ -103,7 +103,7 @@ package com.animenight.igs.data
 					'young_adults': 6,
 					'adults': 7,
 					'middle_aged': 4,
-					'elderly': 0
+					'elderly': 3
 				}
 			},
 			'sandbox': {
@@ -138,8 +138,8 @@ package com.animenight.igs.data
 					'teens': 3,
 					'young_adults': 8,
 					'adults': 3,
-					'middle_aged': 0,
-					'elderly': 0
+					'middle_aged': -4,
+					'elderly': -5
 				}
 			},
 			'racing': {

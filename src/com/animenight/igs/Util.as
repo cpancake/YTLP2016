@@ -11,11 +11,19 @@ package com.animenight.igs
 	{
 		private static var _numberFormatter:NumberFormatter = null;
 		
-		public static function formatNumber(number:Number):String
+		public static function formatMoney(number:Number):String
 		{
 			if (_numberFormatter == null)
 				_numberFormatter = new NumberFormatter('en-US');
 			return _numberFormatter.formatNumber(number);
+		}
+		
+		public static function formatNumber(number:Number):String
+		{
+			if (_numberFormatter == null)
+				_numberFormatter = new NumberFormatter('en-US');
+			var cash:String = _numberFormatter.formatInt(int(number));
+			return cash.substr(0, cash.indexOf("."));
 		}
 		
 		public static function formatTime(hour:Number):String
@@ -48,13 +56,37 @@ package com.animenight.igs
 			return a[Math.floor(Math.random() * a.length)];
 		}
 		
+		public static function generateRandomString(length:Number):String
+		{
+			var chars:String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+			var num_chars:Number = chars.length - 1;
+			var randomChar:String = "";
+
+			for (var i:Number = 0; i < length; i++)
+			{
+				randomChar += chars.charAt(Math.floor(Util.randomer() * num_chars));
+			}
+			return randomChar;
+		}
+		
+		public static function generateUniqueId(player:Player):String
+		{
+			var id:String = "";
+			do
+			{			
+				id = generateRandomString(10);
+			}
+			while (player.videoProjects.filter(function(v:VideoProject, _, __) { return v.id == id; }).length > 0);
+			return id;
+		}
+		
 		public static function toTitleCase(string):String
 		{
 			return string.toLowerCase().replace(/_/g, ' ').replace(/(\s(?:de|a|o|from|in|the|e|da|do|em|ou|[\u00C0-\u00ff]))\b/ig, function (_, match) {
 				return match.toLowerCase();
-			}).replace(/\b([a-z\u00C0-\u00ff])/g, function (_, initial) {
+			}).replace(/(\b|^)([a-z\u00C0-\u00ff])/g, function (_, _, initial) {
 				return initial.toUpperCase();
-			}).replace(/'S/g, '\'s');
+			}).replace(/'S/g, '\'s').replace(/\^/g, "");
 		}
 		
 		public static function daysAgo(today:Number, day:Number):String
@@ -63,6 +95,18 @@ package com.animenight.igs
 			if (daysAgo == 0)
 				return "today";
 			return daysAgo + " days ago";
+		}
+		
+		public static function dimret(x:Number, max:Number):Number
+		{
+			var realMax:Number = max - 1;
+			return Math.max(0, realMax + (1 - 1 / ((1 / realMax) * x)));
+		}
+		
+		public static function dimretScale(x:Number, max:Number, scale:Number):Number
+		{
+			var xIntercept:Number = scale / max;
+			return max - scale / (x + xIntercept);
 		}
 		
 		public static function objectKeys(obj:Object):Array
@@ -127,6 +171,16 @@ package com.animenight.igs
 		public static function combineColorComponents(red:uint, green:uint, blue:uint):uint
 		{
 			return ((red << 16) | (green << 8) | blue);
+		}
+		
+		public static function shallowClone(obj:Object):Object
+		{
+			var newObj:Object = {};
+			for (var k in obj)
+			{
+				newObj[k] = obj[k];
+			}
+			return newObj;
 		}
 	}
 }

@@ -94,6 +94,17 @@ package com.animenight.igs.components
 			_format.font = value;
 			this.update();
 		}
+		
+		public function get italics():Boolean
+		{
+			return _format.italic;
+		}
+		
+		public function set italics(value:Boolean)
+		{
+			_format.italic = value;
+			this.update();
+		}
 	}
 
 }

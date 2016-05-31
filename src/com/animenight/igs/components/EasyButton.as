@@ -1,5 +1,6 @@
 package com.animenight.igs.components 
 {
+	import com.animenight.igs.GraphicsExtensions;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextFieldAutoSize;
@@ -15,6 +16,7 @@ package com.animenight.igs.components
 		private var _label:EasyTextField;
 		private var _color:uint = 0xffffff;
 		private var _enabled:Boolean = true;
+		private var _active:Boolean = false;
 		
 		public function EasyButton(text:String)
 		{
@@ -50,6 +52,12 @@ package com.animenight.igs.components
 			return _label.text;
 		}
 		
+		public function set text(value:String):void
+		{
+			_label.text = value;
+			draw();
+		}
+		
 		public function get enabled():Boolean 
 		{
 			return _enabled;
@@ -81,14 +89,15 @@ package com.animenight.igs.components
 			draw();
 		}
 		
+		public function resizeBox(width:Number, height:Number):void
+		{
+			resize(width - PADDING * 2, height - PADDING * 2);
+		}
+		
 		private function draw():void
 		{
-			this.graphics.beginFill(0x000000);
-			this.graphics.drawRect(0, 0, _label.width + PADDING * 2, _label.height + PADDING * 2);
-			this.graphics.endFill();
-			this.graphics.beginFill(_color);
-			this.graphics.drawRect(1, 1, (_label.width + PADDING * 2) - 2, (_label.height + PADDING * 2) - 2);
-			this.graphics.endFill();
+			this.graphics.clear();
+			GraphicsExtensions.drawBorderedRect(this.graphics, 0, 0, _label.width + PADDING * 2, _label.height + PADDING * 2, 0x000000, _color);
 		}
 	}
 

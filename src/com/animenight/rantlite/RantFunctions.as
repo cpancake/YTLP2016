@@ -13,7 +13,8 @@ package com.animenight.rantlite
 			functions = {
 				n: this.num,
 				num: this.num,
-				'case': this.caseFunction
+				'case': this.caseFunction,
+				char: this.charFunction
 			};
 		}
 		
@@ -58,6 +59,12 @@ package com.animenight.rantlite
 				});
 			}
 			return resultS;
+		}
+		
+		private function charFunction():String
+		{
+			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			return chars[Math.floor(Math.random() * chars.length)];
 		}
 	}
 
