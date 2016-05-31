@@ -57,8 +57,9 @@ package com.animenight.rantlite
 		
 		private function makeQueryAction(name:String, subtype:String, classes:Array):Function
 		{
+			var query = new RantQuery(name, subtype, classes, _vocab);
 			return function() {
-				return new RantQuery(name, subtype, classes, _vocab).getResult();
+				return query.getResult();
 			}
 		}
 		
@@ -67,21 +68,21 @@ package com.animenight.rantlite
 			var weightsTotal:Number = 0;
 			for (var i = 0; i < weights.length; i++)
 				weightsTotal += weights[i];
-			var randomWeight:Number = Math.random() * weightsTotal;
-			weightsTotal = 0;
-			var randomItem:Function;
-			for (var i = 0; i < weights.length; i++)
-			{
-				weightsTotal += weights[i];
-				if (randomWeight < weightsTotal)
-				{
-					randomItem = items[i];
-					break;
-				}
-			}
-			if(!randomItem)
-				randomItem = items[items.length - 1];
 			return function() {
+				var randomWeight:Number = Math.random() * weightsTotal;
+				weightsTotal = 0;
+				var randomItem:Function;
+				for (var i = 0; i < weights.length; i++)
+				{
+					weightsTotal += weights[i];
+					if (randomWeight < weightsTotal)
+					{
+						randomItem = items[i];
+						break;
+					}
+				}
+				if(!randomItem)
+					randomItem = items[items.length - 1];
 				return randomItem();
 			}
 		}

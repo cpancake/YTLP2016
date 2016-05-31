@@ -4,11 +4,14 @@ package com.animenight.igs.scenes.tabs
 	import com.animenight.igs.Util;
 	import com.animenight.igs.VideoProject;
 	import com.animenight.igs.components.EasyButton;
+	import com.animenight.igs.components.EasyTextField;
+	import com.animenight.igs.components.TopVideosList;
 	import com.bit101.charts.LineChart;
 	import com.animenight.igs.components.PieChart;
 	import com.animenight.igs.data.Colors;
 	import com.animenight.igs.data.FanGroups;
 	import com.animenight.igs.data.Genres;
+	import com.bit101.components.ScrollPane;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -28,22 +31,21 @@ package com.animenight.igs.scenes.tabs
 		private var _topVideosButton:EasyButton;
 		
 		private var _yourChannelTab:Sprite;
+		private var _topVideosTab:ScrollPane;
 		
 		private var _ageGroupChart:PieChart;
-		//private var _genreChart:PieChart;
 		private var _viewChart:LineChart;
 		private var _subChart:LineChart;
+		private var _infoTextField:EasyTextField;
+		
+		private var _topVideosList:TopVideosList;
 		
 		public function CommunityTab(player:Player) 
 		{
 			_player = player;
 			
-			/*_genreChart = new PieChart(100, "Videos By Genre");
-			_genreChart.x = 10;
-			updateGenreChart();*/
-			
 			_ageGroupChart = new PieChart(100, "Audience Ages");
-			_ageGroupChart.x = _genreChart.x + _genreChart.width + 10;
+			_ageGroupChart.x = 335;
 			updateAgeChart();
 			
 			_viewChart = new LineChart("Daily Views");
@@ -60,15 +62,27 @@ package com.animenight.igs.scenes.tabs
 			_subChart.lineWidth = 3;
 			updateSubChart();
 			
+			_infoTextField = new EasyTextField("");
+			_infoTextField.x = 10;
+			_infoTextField.size = 16;
+			
+			_topVideosList = new TopVideosList();
+			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 		}
 		
 		public function update():void
 		{
 			updateAgeChart();
-			//updateGenreChart();
 			updateViewChart();
 			updateSubChart();
+			updateInfoText();
+			
+			if (_topVideosTab != null)
+			{
+				_topVideosTab.update();
+			}
+			_topVideosList.update(_player.aiPlayers.topVideos);
 		}
 		
 		private function addedToStage(e:Event):void
@@ -105,9 +119,21 @@ package com.animenight.igs.scenes.tabs
 			this.addChild(_yourChannelTab);
 			
 			_yourChannelTab.addChild(_ageGroupChart);
-			_yourChannelTab.addChild(_genreChart);
 			_yourChannelTab.addChild(_viewChart);
 			_yourChannelTab.addChild(_subChart);
+			_yourChannelTab.addChild(_infoTextField);
+			
+			_topVideosTab = new ScrollPane();
+			_topVideosTab.x = 10 + SIDEBAR_WIDTH + 10;
+			_topVideosTab.y = 10;
+			_topVideosTab.width = CONTENT_WIDTH;
+			_topVideosTab.height = 500 - _topVideosTab.y - 10;
+			_topVideosTab.drawBackground = false;
+			_topVideosTab.autoHideScrollBar = true;
+			_topVideosTab.visible = false;
+			this.addChild(_topVideosTab);
+			
+			_topVideosTab.addChild(_topVideosList);
 		}
 		
 		private function updateAgeChart():void
@@ -125,38 +151,6 @@ package com.animenight.igs.scenes.tabs
 			_ageGroupChart.update(segments.reverse());
 		}
 		
-		/*private function updateGenreChart():void
-		{
-			var genreCounts:Object = {};
-			var anyVideos:Boolean = false;
-			_player.videoProjects.forEach(function(v:VideoProject, _, __) {
-				if (!v.released) return;
-				anyVideos = true;
-				genreCounts[v.game.genre] = (genreCounts.hasOwnProperty(v.game.genre) ? genreCounts[v.game.genre] + 1 : 1);
-			});
-			
-			var segments:Array = [];
-			var i:Number = 0;
-			
-			if (!anyVideos)
-			{
-				segments = [{
-					color: 0xffffff,
-					percent: 1,
-					label: null
-				}];
-			}
-			
-			Genres.KEYS.forEach(function(k:String, _, __) {
-				segments.push({
-					percent: (genreCounts[k] || 0) / _player.videoProjects.length,
-					color: Colors.COLORS[i++],
-					label: Genres.OBJECT[k].name
-				});
-			});
-			_genreChart.update(segments);
-		}*/
-		
 		private function updateViewChart():void
 		{
 			_viewChart.data = _player.viewHistory.data;
@@ -171,6 +165,15 @@ package com.animenight.igs.scenes.tabs
 			_subChart.y = _ageGroupChart.y + _ageGroupChart.height + 10 + _subChart.negativeY;
 		}
 		
+		private function updateInfoText():void
+		{
+			_infoTextField.text = 
+				"Total Subs: " + Util.formatNumber(_player.subs) +
+				"\nTotal Views: " + Util.formatNumber(_player.totalViews) +
+				"\nIncome So Far: $" + Util.formatMoney(_player.totalIncome) +
+				"\nChannel Ranking: -";
+		}
+		
 		private function channelButtonClicked(e:MouseEvent):void
 		{
 			_channelButton.enabled = false;
@@ -178,6 +181,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = true;
 			
 			_yourChannelTab.visible = true;
+			_topVideosTab.visible = false;
 		}
 		
 		private function internetButtonClicked(e:MouseEvent):void
@@ -187,6 +191,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = true;
 			
 			_yourChannelTab.visible = false;
+			_topVideosTab.visible = false;
 		}
 		
 		private function topVideosButtonClicked(e:MouseEvent):void
@@ -196,6 +201,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = false;
 			
 			_yourChannelTab.visible = false;
+			_topVideosTab.visible = true;
 		}
 	}
 

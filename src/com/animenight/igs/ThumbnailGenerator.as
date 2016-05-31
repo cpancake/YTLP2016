@@ -47,7 +47,12 @@ package com.animenight.igs
 				var person:Number = Math.floor(Util.randomer() * ThumbnailSeeds.PEOPLE.length);
 				var faceImage:Bitmap = ThumbnailSeeds.PEOPLE[person];
 				numberSide = ThumbnailSeeds.PEOPLE_SIDES[person];
-				finalImage.bitmapData.draw(faceImage);
+				// 50% chance to flip
+				var rotation:Matrix = new Matrix(); // (Math.random() > 0.5 ? new Matrix() : new Matrix( -1, 0, 0, 1, faceImage.width, 0));
+				// rotate a little bit randomly
+				//rotation.rotate((0.05 * Math.PI) - Math.random() * 0.1 * Math.PI);
+				faceImage.smoothing = true;
+				finalImage.bitmapData.draw(faceImage, rotation, null, null, null, true);
 			}
 			
 			if (isLP)
@@ -71,6 +76,7 @@ package com.animenight.igs
 		
 		private static function randomFont():String
 		{
+			return PosterGenerator.randomFont().fontName;
 			var fonts:Array = Font.enumerateFonts(true).map(function(f, _, __) { return f.fontName.toLowerCase(); });
 			var fontsPresent = _numberFonts.filter(function(font:String, _, __) { return fonts.indexOf(font.toLowerCase()) != -1; });
 			if (fontsPresent.length == 0)

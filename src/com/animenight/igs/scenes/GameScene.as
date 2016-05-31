@@ -3,6 +3,7 @@ package com.animenight.igs.scenes
 	import com.animenight.igs.*;
 	import com.animenight.igs.components.ChangeIndicator;
 	import com.animenight.igs.components.MessageBox;
+	import com.animenight.igs.components.VideoBox;
 	import com.animenight.igs.events.KillMeEvent;
 	import com.animenight.igs.events.MessageChoiceEvent;
 	import com.animenight.igs.events.MessageEvent;
@@ -17,6 +18,7 @@ package com.animenight.igs.scenes
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.VideoEvent;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.text.TextField;
@@ -37,6 +39,7 @@ package com.animenight.igs.scenes
 		private var _currentTab:String;
 		private var _blackBox:Sprite;
 		private var _messageBox:MessageBox;
+		private var _videoBox:VideoBox;
 		
 		private var _changeIndicators:Array = [];
 		
@@ -80,6 +83,7 @@ package com.animenight.igs.scenes
 				value.addEventListener(MessageEvent.SHOW_MESSAGE, showBoxEvent);
 				value.addEventListener(MessageEvent.SHOW_CHOICE, showChoiceEvent);
 				value.addEventListener(MessageEvent.SHOW_INPUT, showChoiceEvent);
+				value.addEventListener(MessageEvent.SHOW_VIDEO, showVideoEvent);
 				value.addEventListener(NewVideoEvent.NEW_VIDEO, function(e:NewVideoEvent) {
 					_tabs["Videos"].newVideo(e.video);
 				});
@@ -270,6 +274,8 @@ package com.animenight.igs.scenes
 			var newSubs:Number = _player.subs - prevSubs;
 			_player.viewHistory.push(newViews);
 			_player.subscriberHistory.push(newSubs);
+			
+			_player.aiPlayers.calculateDay();
 				
 			updateUI();
 		}
@@ -353,12 +359,39 @@ package com.animenight.igs.scenes
 			this.addChild(messageBox);
 		}
 		
+		private function showVideoEvent(e:MessageEvent):void
+		{
+			if (_videoBox != null)
+			{
+				this.removeChild(_videoBox);
+			}
+			var videoBox:VideoBox = new VideoBox(e.video);
+			videoBox.x = 400 - (VideoBox.MESSAGE_BOX_WIDTH / 2);
+			videoBox.y = 300 - (VideoBox.MESSAGE_BOX_HEIGHT / 2);
+			_videoBox = videoBox;
+			_videoBox.addEventListener(KillMeEvent.KILL_ME, function(e:KillMeEvent):void {
+				removeChild(e.me);
+				_videoBox = null;
+			});
+			this.addChild(videoBox);
+			
+			// make sure _blackBox is on top of all children
+			this.removeChild(_blackBox);
+			this.addChild(_blackBox);
+		}
+		
 		/*
 		 * Debugger functions
 		*/
 		public function dcash(money:int):void
 		{
 			_player.cash = money;
+			updateUI();
+		}
+		
+		public function dsubs(subs:int):void
+		{
+			_player.subs = subs;
 			updateUI();
 		}
 		
@@ -405,6 +438,11 @@ package com.animenight.igs.scenes
 		public function dmodel():String
 		{
 			return JSON.stringify(player.viewerModel);
+		}
+		
+		public function dcomment(targetLength:Number = 100):String
+		{
+			return Comments.generate(targetLength);
 		}
 	}
 

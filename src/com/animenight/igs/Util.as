@@ -182,5 +182,11 @@ package com.animenight.igs
 			}
 			return newObj;
 		}
+		
+		public static function maxLength(s:String, l:Number):String
+		{
+			if (s.length < l) return s;
+			return s.substr(0, l - 3) + "...";
+		}
 	}
 }

@@ -63,8 +63,8 @@ package com.animenight.rantlite
 		
 		private function charFunction():String
 		{
-			var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-			return chars[Math.floor(Math.random() * chars.length)];
+			var chars:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			return chars.charAt(Math.floor(Math.random() * chars.length)).toLowerCase();
 		}
 	}
 

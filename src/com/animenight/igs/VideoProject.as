@@ -2,6 +2,7 @@ package com.animenight.igs
 {
 	import com.animenight.igs.data.FanGroups;
 	import com.animenight.igs.data.Genres;
+	import flash.display.Bitmap;
 	/**
 	 * ...
 	 * @author Andrew Rogers
@@ -27,6 +28,11 @@ package com.animenight.igs
 		public var likes:Number = 0;
 		public var dislikes:Number = 0;
 		public var totalIncome:Number = 0;
+		public var viewsToday:Number = 0;
+		
+		public var aiThumbnail:Bitmap;
+		public var aiPlayer:Player;
+		public var aiDescription:String;
 		
 		public var videos:Array = [];
 		
@@ -85,7 +91,12 @@ package com.animenight.igs
 				totalMult += viewerModel[k];
 			});
 			
-			var newViews:Number = 5 + (subsYetToSee(daysSinceRelease) * player.subs) * videoQuality * totalMult * (game.getPopularity(player.daysPlayed) / 5);
+			var newViews:Number = 
+				5 + 
+				(subsYetToSee(daysSinceRelease) * player.subs * (0.5 * (Math.random() * 0.25))) * 
+				videoQuality * 
+				totalMult * 
+				(game.getPopularity(player.daysPlayed) / 5);
 			if (inSeries)
 			{
 				if (game.tripleA)
@@ -113,6 +124,7 @@ package com.animenight.igs
 				newIncome += Math.floor(_withheldIncome);
 				_withheldIncome -= Math.floor(_withheldIncome);
 			}
+			viewsToday = newViews;
 			this.views += newViews;
 			this.totalIncome += newIncome;
 			player.subs += subs;

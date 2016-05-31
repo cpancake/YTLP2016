@@ -1,11 +1,13 @@
 {
 	(0.5)<name><surname>|
-    (0.5)<name><surname>|
+    (0.5)<surname>|
     (0.4)<adj><noun>|
     (0.2)<adj><verb.er>|
     (0.2)<noun><verb.er>|
 	(0.05)<em><adj><noun>|
 	(0.05)<place><noun-animal>|
 	(0.2)<noun>|
-	(0.05)<quality.est><noun>
+	(0.05)<quality.est><noun>|
+	(0.3){<noun>|<verb>|<adj>}{(2)[char]|}|
+	(0.001)corndrafter
 }{|(0.4)[num:1;100]}

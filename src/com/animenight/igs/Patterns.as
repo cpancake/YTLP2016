@@ -24,11 +24,16 @@ package com.animenight.igs
 		
 		public static function Username():String
 		{
-			var username = Patterns.GetInstance().Run('username');
+			var username;
+			do
+			{
+				username = Patterns.GetInstance().Run('username');
+			} while (username.length > 20);
 			return username.replace(/\s/g, '');
 		}
 		
 		private var _patterns:Object;
+		private var _compiledPatterns:Object = {};
 		private var _rant:Rant;
 		
 		[Embed(source = "../../../patterns/username.rant", mimeType = "application/octet-stream")]
@@ -56,6 +61,11 @@ package com.animenight.igs
 		{
 			if (!_patterns.hasOwnProperty(name))
 				return "[Missing Pattern]";
+			/*if (!_compiledPatterns.hasOwnProperty(name))
+			{
+				_compiledPatterns[name] = _rant.Compile(_patterns[name]);
+			}
+			return _compiledPatterns[name]();*/
 			return _rant.Do(_patterns[name]);
 		}
 		

@@ -35,8 +35,12 @@ package com.animenight.igs
 		public var series:Array = [];
 		public var videoProjects:Array = [];
 		
+		public var aiPlayers:AIPlayers;
+		
+		public var aiVideoProjects:RollingArray = new RollingArray(10);
+		
 		public var subscriberHistory:RollingArray = new RollingArray(7, [0,0,0,0,0,0,0]);
-		public var viewHistory:RollingArray = new RollingArray(7, [0,0,0,0,0,0,0]);
+		public var viewHistory:RollingArray = new RollingArray(7, [0, 0, 0, 0, 0, 0, 0]);
 		
 		public var viewerModel:Object = {
 			'children': 1/6,
@@ -47,9 +51,14 @@ package com.animenight.igs
 			'elderly': 1 / 6
 		};
 		
-		public function Player(name:String = 'Default') 
+		public function Player(name:String = 'Default', isAi:Boolean = false) 
 		{
 			this.name = name;
+			if (!isAi)
+			{
+				this.games.generateGames();
+				aiPlayers = new AIPlayers(this);
+			}
 		}
 		
 		public function generateName():void
@@ -70,6 +79,24 @@ package com.animenight.igs
 		public function get editMult():Number
 		{
 			return Upgrades.EditingUpgrades[editUpgrade].mult;
+		}
+		
+		public function get totalViews():Number
+		{
+			var totalViews:Number = 0;
+			videoProjects.forEach(function(v:VideoProject, _, __) {
+				totalViews += v.views;
+			});
+			return totalViews;
+		}
+		
+		public function get totalIncome():Number
+		{
+			var totalMoney:Number = 0;
+			videoProjects.forEach(function(v:VideoProject, _, __) {
+				totalMoney += v.income(v.views);
+			});
+			return totalMoney;
 		}
 		
 		public function jobPerformanceIncrease():Number

@@ -165,7 +165,7 @@ package com.animenight.igs
 			return PosterSeeds.IMAGES[Math.floor(Util.randomer() * PosterSeeds.IMAGES.length)];
 		}
 		
-		private static function randomFont():Font
+		public static function randomFont():Font
 		{
 			var fonts = Font.enumerateFonts(true);
 			var font:Font;

@@ -16,6 +16,7 @@ package
 	import flash.system.Capabilities;
 	import flash.text.Font;
 	import com.torrunt.DeveloperConsole;
+	import flash.text.engine.FontWeight;
 
 	/**
 	 * ...
@@ -30,6 +31,13 @@ package
 			fontFamily = "Open Sans", 
 			fontName = "Open Sans")]
 		private static var _openSans:Class;
+		[Embed(
+			source = "../resources/opensans-bold.ttf", 
+			embedAsCFF = "false", 
+			fontFamily = "Open Sans", 
+			fontName = "Open Sans",
+		fontWeight="bold")]
+		private static var _openSansBold:Class;
 		private static var _instance:Main;
 		private static var _traces:Array = [];
 		
@@ -39,6 +47,8 @@ package
 		
 		public function Main() 
 		{
+			Font.registerFont(_openSans);
+			Font.registerFont(_openSansBold);
 			_instance = this;
 			if (stage) init();
 			else addEventListener(Event.ADDED_TO_STAGE, init);

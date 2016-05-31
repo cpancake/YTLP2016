@@ -15,6 +15,10 @@ package com.animenight.igs
 		
 		public function Games() 
 		{
+		}
+		
+		public function generateGames():void
+		{
 			for (var i = 0; i < 15; i++)
 			{
 				var name = uniqueCompanyName();
