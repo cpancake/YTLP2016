@@ -34,6 +34,7 @@ package com.animenight.igs
 		public var games:Games = new Games();
 		public var series:Array = [];
 		public var videoProjects:Array = [];
+		public var latestVideo:VideoProject = null;
 		
 		public var aiPlayers:AIPlayers;
 		

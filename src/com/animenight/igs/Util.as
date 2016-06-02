@@ -123,6 +123,26 @@ package com.animenight.igs
 			return o;
 		}
 		
+		public static function shuffleTwo(obj1, obj2):void 
+		{
+			var l = obj1.length,
+				i = 0,
+				rnd,
+				tmp1,
+				tmp2;
+
+			while (i < l) {
+				rnd = Math.floor(Math.random() * i);
+				tmp1 = obj1[i];
+				tmp2 = obj2[i];
+				obj1[i] = obj1[rnd];
+				obj2[i] = obj2[rnd];
+				obj1[rnd] = tmp1;
+				obj2[rnd] = tmp2;
+				i += 1;
+			}
+		}
+		
 		public static function stringMult(s:String, m:Number):String
 		{
 			var a:Array = [];
@@ -187,6 +207,13 @@ package com.animenight.igs
 		{
 			if (s.length < l) return s;
 			return s.substr(0, l - 3) + "...";
+		}
+		
+		public static function keyOrDefault(obj:Object, k:String, d:Object):Object
+		{
+			if (obj.hasOwnProperty(k))
+				return obj[k];
+			return d;
 		}
 	}
 }

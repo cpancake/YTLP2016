@@ -35,7 +35,7 @@ package com.animenight.igs
 			
 		}
 		
-		public static function generateThumbnail(isLP:Boolean, number:Number = 1):Bitmap
+		public static function generateThumbnail(isLP:Boolean, number:Number = 1, face:Bitmap = null, faceSide:String = null):Bitmap
 		{
 			var gameImage:Bitmap = ThumbnailSeeds.IMAGES[Math.floor(Util.randomer() * ThumbnailSeeds.IMAGES.length)];
 			var finalImage:Bitmap = new Bitmap(gameImage.bitmapData.clone());
@@ -45,8 +45,8 @@ package com.animenight.igs
 			if (hasFace)
 			{
 				var person:Number = Math.floor(Util.randomer() * ThumbnailSeeds.PEOPLE.length);
-				var faceImage:Bitmap = ThumbnailSeeds.PEOPLE[person];
-				numberSide = ThumbnailSeeds.PEOPLE_SIDES[person];
+				var faceImage:Bitmap = (face == null ? ThumbnailSeeds.PEOPLE[person] : face);
+				numberSide = (faceSide == null ? ThumbnailSeeds.PEOPLE_SIDES[person] : faceSide);
 				// 50% chance to flip
 				var rotation:Matrix = new Matrix(); // (Math.random() > 0.5 ? new Matrix() : new Matrix( -1, 0, 0, 1, faceImage.width, 0));
 				// rotate a little bit randomly

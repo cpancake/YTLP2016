@@ -6,12 +6,15 @@ package com.animenight.igs.scenes.tabs
 	import com.animenight.igs.components.EasyButton;
 	import com.animenight.igs.components.EasyTextField;
 	import com.animenight.igs.components.TopVideosList;
+	import com.animenight.igs.data.Communities;
+	import com.animenight.igs.events.UIEvent;
 	import com.bit101.charts.LineChart;
 	import com.animenight.igs.components.PieChart;
 	import com.animenight.igs.data.Colors;
 	import com.animenight.igs.data.FanGroups;
 	import com.animenight.igs.data.Genres;
 	import com.bit101.components.ScrollPane;
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -32,6 +35,7 @@ package com.animenight.igs.scenes.tabs
 		
 		private var _yourChannelTab:Sprite;
 		private var _topVideosTab:ScrollPane;
+		private var _internetTab:ScrollPane;
 		
 		private var _ageGroupChart:PieChart;
 		private var _viewChart:LineChart;
@@ -39,6 +43,8 @@ package com.animenight.igs.scenes.tabs
 		private var _infoTextField:EasyTextField;
 		
 		private var _topVideosList:TopVideosList;
+		
+		private var _communityButtonUpdates:Array = [];
 		
 		public function CommunityTab(player:Player) 
 		{
@@ -83,6 +89,9 @@ package com.animenight.igs.scenes.tabs
 				_topVideosTab.update();
 			}
 			_topVideosList.update(_player.aiPlayers.topVideos);
+			_communityButtonUpdates.forEach(function(c:Function, _, __) {
+				c();
+			});
 		}
 		
 		private function addedToStage(e:Event):void
@@ -134,6 +143,68 @@ package com.animenight.igs.scenes.tabs
 			this.addChild(_topVideosTab);
 			
 			_topVideosTab.addChild(_topVideosList);
+			
+			_internetTab = new ScrollPane();
+			_internetTab.x = 10 + SIDEBAR_WIDTH + 10;
+			_internetTab.y = 10;
+			_internetTab.width = CONTENT_WIDTH;
+			_internetTab.height = 500 - _internetTab.y - 10;
+			_internetTab.drawBackground = false;
+			_internetTab.autoHideScrollBar = true;
+			_internetTab.visible = false;
+			this.addChild(_internetTab);
+			
+			var currentY:Number = 0;
+			Communities.KEYS.forEach(function(k:String, _, __) {
+				var community:Object = Communities.OBJECT[k];
+				var icon:Bitmap = new Bitmap((community.icon as Bitmap).bitmapData);
+				icon.smoothing = true;
+				icon.width = 150;
+				icon.height = 90;
+				icon.y = currentY;
+				var title:EasyTextField = new EasyTextField(community.name);
+				title.bold = true;
+				title.size = 24;
+				title.x = icon.width + 10;
+				title.y = icon.y;
+				var desc:EasyTextField = new EasyTextField(community.description);
+				desc.x = title.x;
+				desc.y = title.y + title.textHeight;
+				desc.width = CONTENT_WIDTH - 10 - desc.x;
+				desc.wordWrap = true;
+				desc.update();
+				var button:EasyButton = new EasyButton("Advertise Latest Video (4 hours)");
+				button.x = title.x;
+				button.y = desc.y + desc.textHeight + 5;
+				button.enabled = false;
+				button.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+					if (_player.hoursLeft < 4)
+					{
+						dispatchEvent(new UIEvent(UIEvent.TIME_NEEDED));
+						return;
+					}
+					_player.hoursLeft -= 4;
+					_player.latestVideo.communities[k] = true;
+					dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+				});
+				
+				_communityButtonUpdates.push(function() {
+					if (!_player.latestVideo) 
+					{
+						button.enabled = false;
+						return;
+					}
+					
+					button.enabled = !_player.latestVideo.communities.hasOwnProperty(k);
+				});
+				
+				_internetTab.addChild(button);
+				_internetTab.addChild(desc);
+				_internetTab.addChild(title);
+				_internetTab.addChild(icon);
+				
+				currentY += Math.max(icon.height + 10, button.y - currentY + button.height + 10);
+			});
 		}
 		
 		private function updateAgeChart():void
@@ -181,6 +252,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = true;
 			
 			_yourChannelTab.visible = true;
+			_internetTab.visible = false;
 			_topVideosTab.visible = false;
 		}
 		
@@ -191,6 +263,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = true;
 			
 			_yourChannelTab.visible = false;
+			_internetTab.visible = true;
 			_topVideosTab.visible = false;
 		}
 		
@@ -201,6 +274,7 @@ package com.animenight.igs.scenes.tabs
 			_topVideosButton.enabled = false;
 			
 			_yourChannelTab.visible = false;
+			_internetTab.visible = false;
 			_topVideosTab.visible = true;
 		}
 	}

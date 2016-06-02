@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<communities>
+	<community>
+		<name>Loddit</name>
+		<ages>
+			<age id="teens" amount="10" />
+			<age id="young_adults" amount="7" />
+		</ages>
+		<genres>
+			<genre id="fps" amount="10" />
+			<genre id="rpg" amount="8" />
+			<genre id="simulation" amount="4" />
+			<genre id="moba" amount="4" />
+			<genre id="sports" amount="-2" />
+			<genre id="puzzle" amount="-6" />
+		</genres>
+		<description>
+			<![CDATA[ This self-styled "homezone of the information superhighway" is made up of predominately 13-24 year olds, with tastes ranging from "trash" to "absolute trash." ]]>
+		</description>
+	</community>
+	<community>
+		<name>BuildDigForums</name>
+		<ages>
+			<age id="children" amount="10" />
+			<age id="teens" amount="5" />
+		</ages>
+		<genres>
+			<genre id="sandbox" amount="10" />
+			<genre id="fps" amount="5" />
+			<genre id="rts" amount="-2" />
+			<genre id="puzzle" amount="-6" />
+		</genres>
+		<description>
+			<![CDATA[ A forum for fans of the popular voxel-based sandbox game "BuildDig."  ]]>
+		</description>
+	</community>
+	<community>
+		<name>Everything Terrible</name>
+		<ages>
+			<age id="young_adults" amount="4" />
+			<age id="adults" amount="10" />
+			<age id="middle_aged" amount="7" />
+		</ages>
+		<genres>
+			<genre id="rts" amount="10" />
+			<genre id="rpg" amount="8" />
+			<genre id="fps" amount="6" />
+			<genre id="puzzle" amount="6" />
+			<genre id="sports" amount="3" />
+			<genre id="simulation" amount="-2" />
+			<genre id="mmo" amount="-6" />
+		</genres>
+		<description>
+			<![CDATA[ The internet makes you smarter!  ]]>
+		</description>
+	</community>
+	<community>
+		<name>HipOldz</name>
+		<ages>
+			<age id="middle_aged" amount="6" />
+			<age id="elderly" amount="10" />
+		</ages>
+		<genres>
+			<genre id="puzzle" amount="10" />
+			<genre id="rts" amount="6" />
+			<genre id="sports" amount="5" />
+			<genre id="simulation" amount="3" />
+			<genre id="moba" amount="-2" />
+			<genre id="mmo" amount="-6" />
+			<genre id="horror" amount="-10" />
+		</genres>
+		<description>
+			<![CDATA[ This is where all the old people can hang out and complain about you never calling.  ]]>
+		</description>
+	</community>
+	<community>
+		<name>Chestkick</name>
+		<ages>
+			<age id="children" amount="6" />
+			<age id="teens" amount="10" />
+		</ages>
+		<genres>
+			<genre id="sandbox" amount="10" />
+			<genre id="fps" amount="6" />
+			<genre id="rpg" amount="4" />
+			<genre id="fighting" amount="2" />
+			<genre id="simulation" amount="-4" />
+		</genres>
+		<description>
+			<![CDATA[ It's sort of like Everything Terrible, but for stingy people.  ]]>
+		</description>
+	</community>
+	<community>
+		<name>clover6</name>
+		<ages>
+			<age id="teens" amount="8" />
+			<age id="young_adult" amount="10" />
+		</ages>
+		<genres>
+			<genre id="fps" amount="10" />
+			<genre id="simulation" amount="8" />
+			<genre id="rpg" amount="6" />
+			<genre id="racing" amount="2" />
+			<genre id="horror" amount="2" />
+		</genres>
+		<description>
+			<![CDATA[ It would be a good idea to stay away from this one.  ]]>
+		</description>
+	</community>
+</communities>

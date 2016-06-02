@@ -46,6 +46,7 @@ package com.animenight.igs.components
 			var that = this;
 			item.addEventListener(NewVideoEvent.RELEASE_VIDEO, function(e:NewVideoEvent):void {
 				that.removeVideo(e.video);
+				GameScene.player.latestVideo = e.video;
 				e.video.day = GameScene.player.daysPlayed;
 				var evt = new NewVideoEvent(NewVideoEvent.RELEASE_VIDEO);
 				evt.video = e.video;

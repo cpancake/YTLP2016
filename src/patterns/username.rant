@@ -9,5 +9,6 @@
 	(0.2)<noun>|
 	(0.05)<quality.est><noun>|
 	(0.3){<noun>|<verb>|<adj>}{(2)[char]|}|
+	(0.4){<noun>|<verb.ing>|<adj>}<name>|
 	(0.001)corndrafter
 }{|(0.4)[num:1;100]}

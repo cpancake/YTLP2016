@@ -1,0 +1,41 @@
+Event: Retsupurae
+Summary: Your video gets retsupuraed! How do you respond?
+Conditions: Subscribers > 5000, 5% chance per turn
+Only Once
+Flow:
+	Part 1: 
+		You're well on your way to becoming one of the internet's gaming greats! I mean, sure, some of your videos aren't the best, but you're trying your hardest, and that's what counts, right?
+
+		Well, some people have a problem with it. Maybe it's the way that you're using a cheap camcorder to record your monitor. Maybe it's because you sound like you're eating your microphone. Or maybe it's because you save scum your way through bad romhacks of NES games.
+
+		Whatever the reason, a channel going by the name of "gretusprame" - run by the famous LPer duo of slowpork and tuberculosis - have taken it upon themselves to do a video riffing on one of yours. They can't do that, right?
+
+	Choices:
+		I'll file a copyright claim!
+			* 3 days later *
+			Your copyright claim against gretusprame is resolved in their favor. It turns out that, even if you did have a copyright on your video, making fun of it is covered under fair use. Who knew?
+
+			But while your frivolous claim didn't affect them, it's caused some of your more mature subscribers to decide they want nothing to do with you. Maybe you should learn to take criticism in stride?
+
+			* lose 50% of middle aged and elderly subscribers, 40% of adult subscribers *
+		Rally my fanbase!
+			* 3 days later *
+			You rally your fanbase to attack gretusprame for the heinous crime of making fun of you. While you manage to make a dent in their like/dislike ratio, and flood their comments with pointless drivel, you find out that they really don't care that much about being popular.
+
+			Though the adults among your fanbase thought it was petty of you, the rabid children among them only became more solidified 
+
+Event: THE CORNDRAFTER RANT
+
+Event: Copyright Claim
+
+Event: Reuploads
+
+Event: Idiot Game Creator
+
+Event: Hack
+
+Event: Drama
+
+Event: Brigade
+
+Event: Plug

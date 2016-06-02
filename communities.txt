@@ -1,0 +1,29 @@
+Loddit -
+	Age Groups: 10 Teens, 7 Young Adult
+	Genres: 10 FPS, 8 RPG, 4 Simulation, 4 MOBA, -2 Sports, -6 Puzzle
+	Description: This self-styled "homezone of the information superhighway" is made up of predominately 13-24 year olds, with tastes ranging from "trash" to "absolute trash."
+
+BuildDigForums -
+	Age Groups: 10 Children, 5 Teens
+	Genres: 10 Sandbox, 5 FPS, -2 RTS, -6 Puzzle
+	Description: A forum for fans of the popular voxel-based sandbox game "BuildDig." 
+
+Everything Terrible -
+	Age Groups: 4 Young Adult, 10 Adult, 7 Middle Aged
+	Genres: 10 RTS, 8 RPG, 6 FPS, 6 Puzzle, 3 Sports, -2 Simulation, -6 MMO
+	Description: The internet makes you smarter!
+
+HipOldz -
+	Age Groups: 6 Middle Aged, 10 Elderly
+	Genres: 10 Puzzle, 6 RTS, 5 Sports, 3 Simulation, -2 MOBA, -6 MMO, -10 Horror
+	Description: This is where all the old people can hang out and complain about you never calling.
+
+Chestkick -
+	Age Groups: 6 Children, 10 Teens
+	Genres: 10 Sandbox, 8 FPS, 4 RPG, 2 Fighting, -4 Simulation
+	Description: It's sort of like Everything Terrible, but for stingy people.
+
+clover6 -
+	Age Groups: 8 Teens, 10 Young Adult
+	Genres: 10 FPS, 8 Simulation, 6 RPG, 2 Racing, 2 Horror
+	Description: It would be a good idea to stay away from this one.

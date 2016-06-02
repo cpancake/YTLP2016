@@ -1,5 +1,6 @@
 package com.animenight.igs 
 {
+	import com.animenight.igs.data.Communities;
 	import com.animenight.igs.data.FanGroups;
 	import com.animenight.igs.data.Genres;
 	import flash.display.Bitmap;
@@ -35,6 +36,7 @@ package com.animenight.igs
 		public var aiDescription:String;
 		
 		public var videos:Array = [];
+		public var communities:Object = {};
 		
 		// the decimal points, rounded off until we can get a full number
 		private var _withheldIncome:Number = 0;
@@ -91,8 +93,21 @@ package com.animenight.igs
 				totalMult += viewerModel[k];
 			});
 			
+			// handle community advertising
+			var communityBoost:Number = 0;
+			Util.objectKeys(communities).forEach(function(k:String, _, __) {
+				var genreOpinion:Number = ((Util.keyOrDefault(Communities.OBJECT[k].genres, game.genre, 0) as Number) + 10) / 20;
+				FanGroups.AGE_GROUPS.forEach(function(ak:String, _, __) {
+					var ageOpinion:Number = (Util.keyOrDefault(Communities.OBJECT[k].ages, ak, 0) as Number) / 10;
+					viewerModel[ak] += ageOpinion * genreOpinion;
+					totalMult += ageOpinion * genreOpinion;
+					communityBoost = 20 * ageOpinion * genreOpinion;
+				});
+			});
+			
 			var newViews:Number = 
-				5 + 
+				5 +
+				communityBoost +
 				(subsYetToSee(daysSinceRelease) * player.subs * (0.5 * (Math.random() * 0.25))) * 
 				videoQuality * 
 				totalMult * 

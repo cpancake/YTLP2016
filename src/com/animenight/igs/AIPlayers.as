@@ -1,6 +1,8 @@
 package com.animenight.igs 
 {
 	import com.animenight.igs.VideoProject;
+	import com.animenight.igs.data.ThumbnailSeeds;
+	import flash.display.Bitmap;
 	/**
 	 * ...
 	 * @author Andrew Rogers
@@ -15,10 +17,15 @@ package com.animenight.igs
 		public function AIPlayers(realPlayer:Player, count:Number = 100) 
 		{
 			_realPlayer = realPlayer;
+			var takenNames:Array = [];
 			for (var i = 0; i < count; i++)
 			{
 				var player:Player = new Player("", true);
-				player.generateName();
+				do
+				{
+					player.generateName();
+				} while (takenNames.indexOf(player.name) != -1);
+				takenNames.push(player.name);
 				player.subs = Math.floor(1000000 + (Math.random() * 9000000));
 				player.recordExperience = 100;
 				player.editExperience = 100;
@@ -60,6 +67,28 @@ package com.animenight.igs
 					}))
 				.sortOn('viewsToday', Array.DESCENDING | Array.NUMERIC)
 				.slice(0, 30);
+				
+			var aiUsers = {};
+			var thumbnailSeeds:Array = ThumbnailSeeds.PEOPLE.slice(0);
+			var thumbnailSides:Array = ThumbnailSeeds.PEOPLE_SIDES.slice(0);
+			Util.shuffleTwo(thumbnailSeeds, thumbnailSides);
+			var i:Number = 0;
+			topVideos.forEach(function(v:VideoProject, _, __) {
+				if (v.aiPlayer == null) return;
+				var face:Number;
+				if (aiUsers.hasOwnProperty(v.aiPlayer.name))
+				{
+					face = aiUsers[v.aiPlayer.name];
+				}
+				else
+				{
+					face = aiUsers[v.aiPlayer.name] = i++;
+				}
+				
+				v.aiThumbnail = (v.isLP ?
+					ThumbnailGenerator.generateThumbnail(true, v.seriesNum, thumbnailSeeds[face], thumbnailSides[face]) :
+					ThumbnailGenerator.generateThumbnail(false, 1, thumbnailSeeds[face], thumbnailSides[face]));
+			});
 		}
 		
 		private function makeNewVideo(player:Player):VideoProject
@@ -72,12 +101,11 @@ package com.animenight.igs
 			{
 				var num:Number =  1 + Math.floor(Math.random() * (game.tripleA ? 65 : 30));
 				video = new VideoProject(false, "Let's Play " + game.name + " Part " + num, game);
-				video.aiThumbnail = ThumbnailGenerator.generateThumbnail(true, num);
+				video.seriesNum = num;
 			}
 			else
 			{
 				video = new VideoProject(true, game.name + " Review", game);
-				video.aiThumbnail = ThumbnailGenerator.generateThumbnail(false);
 			}
 			
 			video.recordTime = 10;
