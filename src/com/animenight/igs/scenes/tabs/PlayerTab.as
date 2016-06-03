@@ -5,6 +5,7 @@ package com.animenight.igs.scenes.tabs
 	import com.animenight.igs.data.Jobs;
 	import com.animenight.igs.Player;
 	import com.animenight.igs.events.*;
+	import com.animenight.igs.data.Upgrades;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -28,6 +29,13 @@ package com.animenight.igs.scenes.tabs
 		private var _getJobButton:EasyButton;
 		private var _noJobTitle:EasyTextField;
 		
+		private var _recordUpgradeTitle:EasyTextField;
+		private var _currentRecordUpgrade:UpgradeBlock;
+		private var _nextRecordUpgrade:UpgradeBlock;
+		private var _editUpgradeTitle:EasyTextField;
+		private var _currentEditUpgrade:UpgradeBlock;
+		private var _nextEditUpgrade:UpgradeBlock;
+		
 		public function PlayerTab(player:Player) 
 		{
 			_player = player;
@@ -46,8 +54,6 @@ package com.animenight.igs.scenes.tabs
 				_noJobContainer.mouseEnabled = false;
 				_jobField.text = "Job: " + _player.currentJob.name + "\nPay: $" + _player.currentJob.pay;
 				_jobField.update();
-			
-				drawPerformanceBar();
 			}
 			else
 			{
@@ -58,6 +64,8 @@ package com.animenight.igs.scenes.tabs
 				_noJobContainer.mouseChildren = true;
 				_noJobContainer.mouseEnabled = true;
 			}
+			_nextEditUpgrade.update();
+			_nextRecordUpgrade.update();
 		}
 		
 		private function addToStage(e:Event):void
@@ -87,35 +95,6 @@ package com.animenight.igs.scenes.tabs
 			_quitButton.addEventListener(MouseEvent.CLICK, quitJob);
 			_hasJobContainer.addChild(_quitButton);
 			
-			_jobPerformanceTitle = new EasyTextField("Job Performance:");
-			_jobPerformanceTitle.x = 25;
-			_jobPerformanceTitle.y = 150;
-			_jobPerformanceTitle.size = 24;
-			_jobPerformanceTitle.update();
-			_hasJobContainer.addChild(_jobPerformanceTitle);
-			
-			_jobPerformance = new Sprite();
-			_jobPerformance.x = 25;
-			_jobPerformance.y = _jobPerformanceTitle.y + _jobPerformanceTitle.height;
-			_hasJobContainer.addChild(_jobPerformance);
-			
-			// draw indicator lines
-			_jobPerformance.graphics.beginFill(0x000000);
-			_jobPerformance.graphics.drawRect(0, 32, 1, 15);
-			_jobPerformance.graphics.drawRect(430, 32, 1, 15);
-			_jobPerformance.graphics.endFill();
-			
-			// indicator labels
-			var leftLabel:EasyTextField = new EasyTextField("Fired");
-			leftLabel.x = _jobPerformance.x - (leftLabel.width / 2);
-			leftLabel.y = _jobPerformance.y + _jobPerformance.height + 30;
-			_hasJobContainer.addChild(leftLabel);
-			
-			var rightLabel:EasyTextField = new EasyTextField("Promoted");
-			rightLabel.x = (_jobPerformance.x + _jobPerformance.width) - (rightLabel.width / 2);
-			rightLabel.y = leftLabel.y;
-			_hasJobContainer.addChild(rightLabel);
-			
 			_noJobContainer = new Sprite();
 			_noJobContainer.graphics.beginFill(0x000000, 0);
 			_noJobContainer.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
@@ -136,30 +115,51 @@ package com.animenight.igs.scenes.tabs
 			this.addChild(_hasJobContainer);
 			this.addChild(_noJobContainer);
 			
+			_recordUpgradeTitle = new EasyTextField("Recording Upgrades");
+			_recordUpgradeTitle.bold = true;
+			_recordUpgradeTitle.size = 24;
+			_recordUpgradeTitle.x = 20;
+			_recordUpgradeTitle.y = _quitButton.y + _quitButton.height + 20;
+			this.addChild(_recordUpgradeTitle);
+			
+			this.graphics.moveTo(_recordUpgradeTitle.x, _recordUpgradeTitle.y + _recordUpgradeTitle.textHeight + 5);
+			this.graphics.lineStyle(1, 0xdddddd);
+			this.graphics.lineTo(775, _recordUpgradeTitle.y + _recordUpgradeTitle.textHeight + 5);
+			
+			_currentRecordUpgrade = new UpgradeBlock(Upgrades.RecordingUpgrades[_player.recordUpgrade], true);
+			_currentRecordUpgrade.x = 25;
+			_currentRecordUpgrade.y = _recordUpgradeTitle.y + _recordUpgradeTitle.textHeight + 10;
+			this.addChild(_currentRecordUpgrade);
+			
+			_nextRecordUpgrade = new UpgradeBlock(Upgrades.RecordingUpgrades[_player.recordUpgrade + 1], false);
+			_nextRecordUpgrade.x = _currentRecordUpgrade.x + _currentRecordUpgrade.width + 20;
+			_nextRecordUpgrade.y = _currentRecordUpgrade.y;
+			_nextRecordUpgrade.addEventListener(UIEvent.UPGRADE_BOUGHT, upgradeBought);
+			this.addChild(_nextRecordUpgrade);
+			
+			_editUpgradeTitle = new EasyTextField("Editing Upgrades");
+			_editUpgradeTitle.bold = true;
+			_editUpgradeTitle.size = 24;
+			_editUpgradeTitle.x = 20;
+			_editUpgradeTitle.y = _currentRecordUpgrade.y + _currentRecordUpgrade.height + 5;
+			this.addChild(_editUpgradeTitle);
+			
+			this.graphics.moveTo(_editUpgradeTitle.x, _editUpgradeTitle.y + _editUpgradeTitle.textHeight + 5);
+			this.graphics.lineStyle(1, 0xdddddd);
+			this.graphics.lineTo(775, _editUpgradeTitle.y + _editUpgradeTitle.textHeight + 5);
+			
+			_currentEditUpgrade = new UpgradeBlock(Upgrades.EditingUpgrades[_player.editUpgrade], true);
+			_currentEditUpgrade.x = _currentRecordUpgrade.x;
+			_currentEditUpgrade.y = _editUpgradeTitle.y + _editUpgradeTitle.textHeight + 10;
+			this.addChild(_currentEditUpgrade);
+			
+			_nextEditUpgrade = new UpgradeBlock(Upgrades.EditingUpgrades[_player.editUpgrade + 1], false);
+			_nextEditUpgrade.x = _currentRecordUpgrade.x + _currentRecordUpgrade.width + 20;
+			_nextEditUpgrade.addEventListener(UIEvent.UPGRADE_BOUGHT, upgradeBought);
+			_nextEditUpgrade.y = _currentEditUpgrade.y;
+			this.addChild(_nextEditUpgrade);
+			
 			this.update();
-		}
-		
-		private function drawPerformanceBar():void
-		{
-			var innerBarWidth:Number = 428 * (_player.workPerformance / 200);
-			_jobPerformance.graphics.beginFill(0x000000, 1);
-			_jobPerformance.graphics.drawRect(0, 0, 431, 32);
-			_jobPerformance.graphics.endFill();
-			_jobPerformance.graphics.beginFill(0xffffff, 1);
-			_jobPerformance.graphics.drawRect(1, 1, 429, 30);
-			_jobPerformance.graphics.endFill();
-			_jobPerformance.graphics.beginFill(performanceColor(_player.workPerformance), 1);
-			_jobPerformance.graphics.drawRect(1, 1, innerBarWidth, 30);
-			_jobPerformance.graphics.endFill();
-		}
-		
-		private function performanceColor(performance:Number):uint
-		{
-			if (performance < 75)
-				return 0xff0000;
-			if (performance > 150)
-				return 0x00ff00;
-			return 0x0000ff;
 		}
 		
 		private function quitJob(e:MouseEvent):void
@@ -232,6 +232,16 @@ package com.animenight.igs.scenes.tabs
 			}
 			this.dispatchEvent(evt);
 			this.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+		}
+		
+		private function upgradeBought(e:UIEvent):void
+		{
+			_currentEditUpgrade.updateUpgrade(Upgrades.EditingUpgrades[_player.editUpgrade], true);
+			_nextEditUpgrade.updateUpgrade(Upgrades.EditingUpgrades[_player.editUpgrade + 1], false);
+			_currentRecordUpgrade.updateUpgrade(Upgrades.RecordingUpgrades[_player.recordUpgrade], true);
+			_nextRecordUpgrade.updateUpgrade(Upgrades.RecordingUpgrades[_player.recordUpgrade + 1], false);
+			
+			dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
 		}
 	}
 

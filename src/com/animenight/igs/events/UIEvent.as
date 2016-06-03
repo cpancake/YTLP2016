@@ -11,6 +11,7 @@ package com.animenight.igs.events
 		public static const SHOULD_UPDATE:String = "shouldUpdate";
 		public static const CASH_CHANGE:String = "cashChange";
 		public static const TIME_NEEDED:String = "timeNeeded";
+		public static const UPGRADE_BOUGHT:String = "upgradeBought";
 		
 		public var cashAmount:Number = 0;
 		public var cashSource:String = "none";

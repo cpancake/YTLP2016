@@ -3,7 +3,7 @@ Summary: Your video gets retsupuraed! How do you respond?
 Conditions: Subscribers > 5000, 5% chance per turn
 Only Once
 Flow:
-	Part 1: 
+	Start: 
 		You're well on your way to becoming one of the internet's gaming greats! I mean, sure, some of your videos aren't the best, but you're trying your hardest, and that's what counts, right?
 
 		Well, some people have a problem with it. Maybe it's the way that you're using a cheap camcorder to record your monitor. Maybe it's because you sound like you're eating your microphone. Or maybe it's because you save scum your way through bad romhacks of NES games.
@@ -22,20 +22,64 @@ Flow:
 			* 3 days later *
 			You rally your fanbase to attack gretusprame for the heinous crime of making fun of you. While you manage to make a dent in their like/dislike ratio, and flood their comments with pointless drivel, you find out that they really don't care that much about being popular.
 
-			Though the adults among your fanbase thought it was petty of you, the rabid children among them only became more solidified 
+			Though the adults among your fanbase thought it was petty of you, the diehard children among them only became more rabid. Maybe this will help make up for the loss in subscribers.
+
+			* lose 30% of middle aged, elderly, and adult subscribers, gain 150% multiplier to views from children, teens, and young adults for next week *
+		Do nothing.
+			* 3 days later *
+			While it hurt your ego a little bit, the Gretusprame video blew over without any serious effects to your channel. Sure, some people you don't know think you're a terrible Let's Player, but they probably weren't going to be your fans anyways.
+
+			At least a few of those people thought you weren't terrible, so it seems you've gained a few subscribers from this.
+
+			* gain 10% of adult and middle aged subscribers *
 
 Event: THE CORNDRAFTER RANT
 
 Event: Copyright Claim
+Summary: Someone has placed a copyright claim on your video!
+Conditions: Subscribers > 100, 1% chance per turn
+Multiple Times, Eight Day Cooldown
+Flow:
+	Start:
+		A rights holder has claimed a copyright on some of the content in your videos. You're sure that it's not a legitimate claim, but YouTube's decided that it's best not to take chances, and have pulled your video. What are you going to do about this?
+
+		* latest video is disabled for the rest of the week *
+	Choices:
+		Fight the claim!
+			60% chance:
+				* 7 days later *
+				It's taken a while, but YouTube's finally decided that your content is indeed yours. You don't receive any recompense for the views you've lost, but news of this meritless claim has brought some new viewers to your channel. That's something.
+
+				* receive an extra 5% subscribers *
+			40% chance:
+				* 7 days later *
+				YouTube's decided that your video was indeed infringing on the rights holder's copyright. Unfortunately, this means that you need to remove the infringing content from your video.
+
+				It's taken you a few hours, but at least somebody will be able to watch your video now.
+
+				* lose eight hours of the day, video is re-enabled *
+		Remove Content and Re-upload Video
+			It takes a few hours, but you're able to remove the offending content and re-upload the video. Now you'll be able to enjoy all the views you were supposed to get.
+
+			* lose eight hours *
 
 Event: Reuploads
+Summary: Someone else is re-uploading your content to another channel.
 
 Event: Idiot Game Creator
+Summary: The creator of a game you've made videos of is being an idiot on Twitter.
 
 Event: Hack
+Summary: Someone has hacked your account and deleted a few of your videos.
 
 Event: Drama
+Summary: You've been pulled into some internet drama you really don't want to be involved with.
 
 Event: Brigade
+Summary: Someone more popular is using their power to attack you and your videos.
 
 Event: Plug
+Summary: Someone more popular than you gives you a shout-out in one of their videos.
+
+Event: Ad Block
+Summary: Some of your viewers are using an ad blocker, so you're not making money from them.

@@ -36,8 +36,23 @@ package
 			embedAsCFF = "false", 
 			fontFamily = "Open Sans", 
 			fontName = "Open Sans",
-		fontWeight="bold")]
+			fontWeight="bold")]
 		private static var _openSansBold:Class;
+		[Embed(
+			source = "../resources/opensans-italic.ttf", 
+			embedAsCFF = "false", 
+			fontFamily = "Open Sans", 
+			fontName = "Open Sans",
+			fontStyle="italic")]
+		private static var _openSansItalic:Class;
+		[Embed(
+			source = "../resources/opensans-bolditalic.ttf", 
+			embedAsCFF = "false", 
+			fontFamily = "Open Sans", 
+			fontName = "Open Sans",
+			fontWeight = "bold",
+			fontStyle="italic")]
+		private static var _openSansBoldItalic:Class;
 		private static var _instance:Main;
 		private static var _traces:Array = [];
 		

@@ -238,11 +238,14 @@ package com.animenight.igs.scenes.tabs
 		
 		private function updateInfoText():void
 		{
+			var ranking:Number = 1000 - Math.floor((_player.subs - 112584) / 9748930 * 1000);
+			ranking = Math.min(1000, ranking);
+			ranking = Math.max(1, ranking);
 			_infoTextField.text = 
 				"Total Subs: " + Util.formatNumber(_player.subs) +
 				"\nTotal Views: " + Util.formatNumber(_player.totalViews) +
 				"\nIncome So Far: $" + Util.formatMoney(_player.totalIncome) +
-				"\nChannel Ranking: -";
+				"\nChannel Ranking: " + (ranking == 100 ? "-" : "#" + ranking);
 		}
 		
 		private function channelButtonClicked(e:MouseEvent):void
