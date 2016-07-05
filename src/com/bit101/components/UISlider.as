@@ -83,7 +83,7 @@ package com.bit101.components
 				return;
 			}
 			var mult:Number = Math.pow(10, _precision);
-			var val:String = (Math.round(_slider.value * mult) / mult).toString();
+			var val:String = (Math.ceil(_slider.value * mult) / mult).toString();
 			var parts:Array = val.split(".");
 			if(parts[1] == null)
 			{ 
@@ -103,7 +103,7 @@ package com.bit101.components
 					val += "0";
 				}
 			}
-			_valueLabel.text = val;
+			_valueLabel.text = val + " hour" + (val == "1" ? "" : "s");
 			positionLabel();
 		}
 		

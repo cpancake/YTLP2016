@@ -25,6 +25,9 @@ package com.animenight.igs
 		public var recordUpgrade:Number = 0;
 		public var editUpgrade:Number = 0;
 		
+		public var lastEditTimeChoice:Number = 1;
+		public var lastRecordTimeChoice:Number = 1;
+		
 		public var workExperience:Number = 0;
 		public var workPerformance:Number = 100;
 		public var workedToday:Boolean = false;
@@ -98,6 +101,14 @@ package com.animenight.igs
 				totalMoney += v.income(v.views);
 			});
 			return totalMoney;
+		}
+		
+		public function get latestUnfinishedVideo():VideoProject
+		{
+			var unfinished = videoProjects.filter(function(e:VideoProject, _, __) { 
+				return !e.released && !(e.recordTime >= e.recordTimeSpecified && e.editingTime >= e.editingTimeSpecified);
+			});
+			return (unfinished.length > 0 ? unfinished[0] : null);
 		}
 		
 		public function jobPerformanceIncrease():Number

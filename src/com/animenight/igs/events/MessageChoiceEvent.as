@@ -12,6 +12,8 @@ package com.animenight.igs.events
 		
 		public var choice:String = "";
 		public var input:String = "";
+		public var recordTime:Number = 0;
+		public var editTime:Number = 0;
 		
 		public function MessageChoiceEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) 
 		{ 

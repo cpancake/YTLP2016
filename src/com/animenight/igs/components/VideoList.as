@@ -15,6 +15,7 @@ package com.animenight.igs.components
 	public class VideoList extends Sprite
 	{
 		public var listWidth:Number;
+		public var reversed:Boolean = true;
 		
 		private var _videos:Array = [];
 		private var _noVideos:EasyTextField;
@@ -77,7 +78,8 @@ package com.animenight.igs.components
 		public function updatePositions()
 		{
 			var currentY:Number = 0;
-			_videos = _videos.sortOn("day", Array.DESCENDING | Array.NUMERIC);
+			if(reversed)
+				_videos = _videos.sortOn("day", Array.NUMERIC | Array.DESCENDING);
 			for (var i = 0; i < _videos.length; i++)
 			{
 				var video:VideoListItem = _videos[i];

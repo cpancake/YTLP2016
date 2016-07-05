@@ -3,6 +3,7 @@ package com.animenight.igs.scenes
 	import com.animenight.igs.*;
 	import com.animenight.igs.components.ChangeIndicator;
 	import com.animenight.igs.components.MessageBox;
+	import com.animenight.igs.components.NewVideoBox;
 	import com.animenight.igs.components.VideoBox;
 	import com.animenight.igs.events.KillMeEvent;
 	import com.animenight.igs.events.MessageChoiceEvent;
@@ -80,10 +81,19 @@ package com.animenight.igs.scenes
 					_statBar.warnShadow();
 					SoundEffects.UNABLE.play(0, 0);
 				});
+				value.addEventListener(UIEvent.GO_TO_UNRELEASED, function(e:UIEvent):void {
+					switchTab("Videos");
+					_tabs["Videos"].goToReleased();
+				});
+				value.addEventListener(UIEvent.GO_TO_SERIES, function(e:UIEvent):void {
+					switchTab("Videos");
+					_tabs["Videos"].goToSeries();
+				});
 				value.addEventListener(MessageEvent.SHOW_MESSAGE, showBoxEvent);
 				value.addEventListener(MessageEvent.SHOW_CHOICE, showChoiceEvent);
 				value.addEventListener(MessageEvent.SHOW_INPUT, showChoiceEvent);
 				value.addEventListener(MessageEvent.SHOW_VIDEO, showVideoEvent);
+				value.addEventListener(MessageEvent.SHOW_NEW_VIDEO, showNewVideoEvent);
 				value.addEventListener(NewVideoEvent.NEW_VIDEO, function(e:NewVideoEvent) {
 					_tabs["Videos"].newVideo(e.video);
 				});
@@ -94,6 +104,12 @@ package com.animenight.igs.scenes
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			this.addEventListener(Event.ENTER_FRAME, updateChangeIndicators);
+		}
+		
+		public function switchTab(tab:String):void
+		{
+			var button = _tabButtons[["Player", "Videos", "Games", "Community"].indexOf(tab)];
+			handleTabButton(button);
 		}
 		
 		public function updateUI():void
@@ -165,6 +181,11 @@ package com.animenight.igs.scenes
 		private function tabButtonClick(e:MouseEvent):void
 		{
 			var button:TabButton = e.target as TabButton;
+			handleTabButton(button);
+		}
+		
+		private function handleTabButton(button:TabButton):void
+		{
 			button.badge = "";
 			button.update();
 			if (button.active) return;
@@ -378,6 +399,24 @@ package com.animenight.igs.scenes
 			// make sure _blackBox is on top of all children
 			this.removeChild(_blackBox);
 			this.addChild(_blackBox);
+		}
+		
+		private function showNewVideoEvent(e:MessageEvent):void
+		{
+			var that = this;
+			var messageBox:NewVideoBox = new NewVideoBox();
+			messageBox.placeholder = e.placeholder;
+			messageBox.addEventListener(MessageChoiceEvent.CHOICE, function(_e:MessageChoiceEvent):void {
+				that.removeChild(messageBox);
+				var evt:MessageChoiceEvent = _e.clone() as MessageChoiceEvent;
+				evt.choice = _e.choice;
+				evt.input = _e.input;
+				evt.recordTime = _e.recordTime;
+				evt.editTime = _e.editTime;
+				if(e.receiver)
+					e.receiver.dispatchEvent(evt);
+			});
+			this.addChild(messageBox);
 		}
 		
 		/*

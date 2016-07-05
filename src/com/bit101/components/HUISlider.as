@@ -53,7 +53,8 @@ package com.bit101.components
 		override protected function init():void
 		{
 			super.init();
-			setSize(200, 18);
+			setSize(200, 22);
+			_slider.height = 22;
 		}
 		
 		/**

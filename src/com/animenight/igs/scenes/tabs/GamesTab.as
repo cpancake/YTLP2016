@@ -176,10 +176,7 @@ package com.animenight.igs.scenes.tabs
 		
 		private function makeReview(e:MouseEvent):void
 		{
-			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_INPUT);
-			messageEvt.message = "Please enter the name for your review of \"" + _currentGame.name + "\"";
-			messageEvt.title = "New Review";
-			messageEvt.buttons = [ "OK", "Cancel" ];
+			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_NEW_VIDEO);
 			messageEvt.receiver = this;
 			var name = _currentGame.name + " Review";
 			messageEvt.placeholder = name;
@@ -187,20 +184,21 @@ package com.animenight.igs.scenes.tabs
 			this.addEventListener(MessageChoiceEvent.CHOICE, function reviewInput(e:MessageChoiceEvent):void {
 				that.removeEventListener(MessageChoiceEvent.CHOICE, reviewInput);
 				if (e.choice == "Cancel") return;
-				var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
 				if (Util.trim(e.input) == '')
 				{
+					var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
 					evt.title = "Error";
 					evt.message = "You need to provide a name for your review!";
+					that.dispatchEvent(evt);
 				}
 				else
 				{
 					var video:VideoProject = new VideoProject(true, Util.trim(e.input), _currentGame);
 					video.id = Util.generateUniqueId(_player);
 					video.day = GameScene.player.daysPlayed;
+					video.recordTimeSpecified = Math.ceil(e.recordTime);
+					video.editingTimeSpecified = Math.ceil(e.editTime);
 					_player.videoProjects.push(video);
-					evt.title = "Review Started";
-					evt.message = "You've started on your review! Head over to the Videos tab to work on it.";
 				
 					var videoEvt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.NEW_VIDEO);
 					videoEvt.video = video;
@@ -208,8 +206,8 @@ package com.animenight.igs.scenes.tabs
 					
 					_currentGame.reviewed = true;
 					_reviewButton.enabled = false;
+					that.dispatchEvent(new UIEvent(UIEvent.GO_TO_UNRELEASED));
 				}
-				that.dispatchEvent(evt);
 			});
 			this.dispatchEvent(messageEvt);
 		}
@@ -234,11 +232,12 @@ package com.animenight.igs.scenes.tabs
 				that.removeEventListener(MessageChoiceEvent.CHOICE, videoInput);
 				if (e.choice == "Cancel") return;
 				
-				var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
 				if (Util.trim(e.input) == '')
 				{
+					var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE);
 					evt.title = "Error";
 					evt.message = "You need to provide a name for your new series!";
+					that.dispatchEvent(evt);
 				}
 				else
 				{
@@ -247,8 +246,6 @@ package com.animenight.igs.scenes.tabs
 					series.day = _player.daysPlayed;
 					series.id = Util.generateUniqueId(_player);
 					_player.series.push(series);
-					evt.title = "Series Created";
-					evt.message = "A new video series has been created. Head over to the Videos tab to start the first video.";
 					
 					var videoEvt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.NEW_VIDEO_SERIES);
 					videoEvt.videoSeries = series;
@@ -256,8 +253,8 @@ package com.animenight.igs.scenes.tabs
 					
 					_currentGame.lped = true;
 					_videoButton.enabled = false;
+					that.dispatchEvent(new UIEvent(UIEvent.GO_TO_SERIES));
 				}
-				that.dispatchEvent(evt);
 			});
 			
 			this.dispatchEvent(messageEvt);

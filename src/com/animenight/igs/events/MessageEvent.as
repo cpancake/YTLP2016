@@ -14,6 +14,7 @@ package com.animenight.igs.events
 		public static const SHOW_CHOICE = "showChoice";
 		public static const SHOW_INPUT = "showInput";
 		public static const SHOW_VIDEO = "showVideo";
+		public static const SHOW_NEW_VIDEO = "showNewVideo";
 		
 		public var title:String = "title";
 		public var message:String = "";

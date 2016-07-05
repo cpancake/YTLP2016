@@ -20,6 +20,7 @@ package com.animenight.igs.components
 	public class VideoListItem extends Sprite
 	{
 		public static const HEIGHT:Number = 37;
+		public static const DONE_COLOR:uint = 0xe6ffd1;
 		
 		[Embed(source = "../../../../../resources/minus_button.png")]
 		private var _minusButtonImage:Class;
@@ -40,11 +41,13 @@ package com.animenight.igs.components
 		private var _background:Sprite;
 		private var _infoPanel:Sprite;
 		private var _infoLabel:EasyTextField;
+		private var _releaseVideoButton:EasyButton;
 		
 		public function VideoListItem(parent:VideoList, video:VideoProject) 
 		{
 			_videoList = parent;
 			_video = video;
+			_releaseVideoButton = new EasyButton("Release Video");
 			
 			this.graphics.beginFill(0xffffff, 0);
 			this.graphics.drawRect(5, 0, parent.listWidth - 10, HEIGHT);
@@ -65,7 +68,7 @@ package com.animenight.igs.components
 			});
 			
 			this.addEventListener(MouseEvent.MOUSE_OUT, function(e:MouseEvent):void {
-				_backgroundColor = 0xffffff;
+				_backgroundColor = isVideoDone() ? DONE_COLOR : 0xffffff;
 				drawBackground();
 			});
 			
@@ -151,63 +154,43 @@ package com.animenight.igs.components
 			}
 			else if (!_video.released)
 			{
-				var action:String = (currentStep() == "Editing" ? "Edit" : "Record");
-				var actionButton:EasyButton = new EasyButton(action + " (1 Hour)");
-				actionButton.x = _videoList.listWidth - 20 - actionButton.width - 5;
-				actionButton.y = 5;
+				var scrapVideoButton:EasyButton = new EasyButton("Scrap Video");
+				scrapVideoButton.x = _videoList.listWidth - 20 - scrapVideoButton.width - 5;
+				scrapVideoButton.y = 5;
 				var that = this;
-				actionButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+				scrapVideoButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent) {
 					e.stopImmediatePropagation();
-					if (GameScene.player.hoursLeft < 1)
-					{
-						that.dispatchEvent(new UIEvent(UIEvent.TIME_NEEDED, true));
-						return;
-					}
-					nextStepButton.enabled = true;
-					GameScene.player.hoursLeft -= 1;
-					
-					if (currentStep() == "Editing")
-					{
-						_video.editingTime++;
-						GameScene.player.editExperience++;
-					}
-					else
-					{
-						_video.recordTime++;
-						GameScene.player.recordExperience++;
-					}
-					
-					that.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE, true));
-					updateLabel();
+					var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_CHOICE, true);
+					messageEvt.title = "Scrap Video";
+					messageEvt.message = "Are you sure you want to scrap this video?";
+					messageEvt.buttons = ["Yes", "No"];
+					messageEvt.receiver = that;
+					that.addEventListener(MessageChoiceEvent.CHOICE, function scrapVideoChoice(e:MessageChoiceEvent):void {
+						that.removeEventListener(MessageChoiceEvent.CHOICE, scrapVideoChoice);
+						
+						if (e.choice == "No") return;
+						_videoList.removeVideo(_video);
+						GameScene.player.videoProjects.splice(GameScene.player.videoProjects.indexOf(_video), 1);
+						that.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+					});
+					that.dispatchEvent(messageEvt);
 				});
-				_infoPanel.addChild(actionButton);
-			
-				var nextStepButton:EasyButton = new EasyButton("Start Editing");
-				nextStepButton.x = _videoList.listWidth - 20 - nextStepButton.width - 5;
-				nextStepButton.y = actionButton.y + actionButton.height + 10;
-				nextStepButton.enabled = false;
-				nextStepButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+				_infoPanel.addChild(scrapVideoButton);
+				
+				_releaseVideoButton.x = _videoList.listWidth - 20 - _releaseVideoButton.width - 5;
+				_releaseVideoButton.y = scrapVideoButton.y + scrapVideoButton.height + 10;
+				_releaseVideoButton.enabled = isVideoDone();
+				_releaseVideoButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent) {
 					e.stopImmediatePropagation();
-					if (_video.finishedRecording)
-					{
-						_video.released = true;
-						_video.finishedEditing = true;
-						var evt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.RELEASE_VIDEO, true);
-						evt.video = _video;
-						that.dispatchEvent(evt);
-					}
-					else
-					{
-						_video.finishedRecording = true;
-						actionButton.text = "Edit (1 Hour)";
-						actionButton.x = _videoList.listWidth - 20 - actionButton.width - 5;
-						nextStepButton.text = "Release";
-						nextStepButton.enabled = false;
-						nextStepButton.x = _videoList.listWidth - 20 - nextStepButton.width - 5;
-					}
+					
+					_video.released = true;
+					var evt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.RELEASE_VIDEO, true);
+					evt.video = _video;
+					that.dispatchEvent(evt);
 				});
-				height = nextStepButton.y + nextStepButton.height + 10;
-				_infoPanel.addChild(nextStepButton);
+				
+				height = _releaseVideoButton.y + _releaseVideoButton.height + 10;
+				_infoPanel.addChild(_releaseVideoButton);
 			}
 			
 			GraphicsExtensions.drawBorderedRect(_infoPanel.graphics, 0, 0, _videoList.listWidth - 20, height, 0x000000, 0xffffff);
@@ -242,21 +225,17 @@ package com.animenight.igs.components
 		
 		public function update():void
 		{
+			_backgroundColor = isVideoDone() ? DONE_COLOR : 0xffffff;
+			_releaseVideoButton.enabled = isVideoDone();
 			updateLabel();
+			drawBackground();
 		}
 		
 		private function drawBackground():void
 		{
-			GraphicsExtensions.drawBorderedRect(_background.graphics, 5, 0, _videoList.listWidth - 10, HEIGHT, 0x000000, 0xffffff);
-		}
-		
-		private function currentStep():String
-		{
-			if (_video.finishedRecording)
-			{
-				return "Editing";
-			}
-			return "Recording";
+			if (!_background) return;
+			_background.graphics.clear();
+			GraphicsExtensions.drawBorderedRect(_background.graphics, 5, 0, _videoList.listWidth - 10, HEIGHT, 0x000000, _backgroundColor);
 		}
 		
 		private function updateLabel():void
@@ -284,21 +263,18 @@ package com.animenight.igs.components
 			else
 			{
 				_infoLabel.text = 
-					"Started " + Util.daysAgo(GameScene.player.daysPlayed, _video.day) + ".\n" +
-					"Stage: ";
-				_infoLabel.text += currentStep();
-				_infoLabel.text += "\nHours Spent Recording: " + _video.recordTime + "\n";
-				_infoLabel.text += "Hours Spent Editing: " + _video.editingTime;
+					"Started " + Util.daysAgo(GameScene.player.daysPlayed, _video.day) + ".\n";
+				var recordPercentage:Number = Math.floor((_video.recordTime / _video.recordTimeSpecified) * 100);
+				_infoLabel.text += "Recording Time: " + _video.recordTime + "/" + _video.recordTimeSpecified +" hours (" + recordPercentage + "% done)\n";
+				var editPercentage:Number = Math.floor((_video.editingTime / _video.editingTimeSpecified) * 100);
+				_infoLabel.text += "Editing Time: " + _video.editingTime + "/" + _video.editingTimeSpecified +" hours (" + editPercentage + "% done)";
 			}
 		}
 		
 		private function newSeriesVideo(e:MouseEvent):void
 		{
 			e.stopImmediatePropagation();
-			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_INPUT, true);
-			messageEvt.message = "Please enter the name for part " + (_video.videos.length + 1) + " of your Let's Play of \"" + _video.game.name + "\"";
-			messageEvt.title = "New Video";
-			messageEvt.buttons = [ "OK", "Cancel" ];
+			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_NEW_VIDEO, true);
 			messageEvt.receiver = this;
 			var name = _video.name + " Part " + (_video.videos.length + 1);
 			messageEvt.placeholder = name;
@@ -306,11 +282,12 @@ package com.animenight.igs.components
 			this.addEventListener(MessageChoiceEvent.CHOICE, function videoInput(e:MessageChoiceEvent):void {
 				that.removeEventListener(MessageChoiceEvent.CHOICE, videoInput);
 				if (e.choice == "Cancel") return;
-				var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE, true);
 				if (Util.trim(e.input) == '')
 				{
+					var evt:MessageEvent = new MessageEvent(MessageEvent.SHOW_MESSAGE, true);
 					evt.title = "Error";
 					evt.message = "You need to provide a name for your new video!";
+					that.dispatchEvent(evt);
 				}
 				else
 				{
@@ -319,20 +296,27 @@ package com.animenight.igs.components
 					video.day = GameScene.player.daysPlayed;
 					video.inSeries = true;
 					video.seriesNum = _video.videos.length + 1;
+					video.recordTimeSpecified = e.recordTime;
+					video.editingTimeSpecified = e.editTime;
 					GameScene.player.videoProjects.push(video);
 					_video.videos.push(video);
-					evt.title = "Video Started";
-					evt.message = "You've started your new video! Click on 'Unreleased Videos' to get to work on it.";
 				
 					var videoEvt:NewVideoEvent = new NewVideoEvent(NewVideoEvent.NEW_VIDEO, true);
 					videoEvt.video = video;
 					that.dispatchEvent(videoEvt);
 					
 					that.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+					that.dispatchEvent(new UIEvent(UIEvent.GO_TO_UNRELEASED, true));
 				}
-				that.dispatchEvent(evt);
 			});
 			this.dispatchEvent(messageEvt);
+			trace(messageEvt);
+		}
+		
+		private function isVideoDone():Boolean
+		{
+			if (_video.isSeries || _video.released) return false;
+			return _video.recordTime >= _video.recordTimeSpecified && _video.editingTime >= _video.editingTimeSpecified;
 		}
 	}
 }

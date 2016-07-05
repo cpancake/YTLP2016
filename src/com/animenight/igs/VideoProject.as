@@ -17,13 +17,13 @@ package com.animenight.igs
 		public var isSeries:Boolean = false;
 		public var day:Number = 1;
 		public var released:Boolean = false;
-		public var finishedRecording:Boolean = false;
-		public var finishedEditing:Boolean = false;
 		public var inSeries:Boolean = false;
 		public var seriesNum:Number = 1;
 		
 		public var recordTime:Number = 0;
 		public var editingTime:Number = 0;
+		public var recordTimeSpecified:Number = 0;
+		public var editingTimeSpecified:Number = 0;
 		
 		public var views:Number = 0;
 		public var likes:Number = 0;

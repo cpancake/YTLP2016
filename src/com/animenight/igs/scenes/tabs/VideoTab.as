@@ -8,6 +8,7 @@ package com.animenight.igs.scenes.tabs
 	import com.animenight.igs.components.TabButton;
 	import com.animenight.igs.components.VideoList;
 	import com.animenight.igs.events.NewVideoEvent;
+	import com.animenight.igs.events.UIEvent;
 	import com.bit101.components.ScrollBar;
 	import com.bit101.components.ScrollPane;
 	import flash.display.Sprite;
@@ -30,6 +31,8 @@ package com.animenight.igs.scenes.tabs
 		private var _unreleasedButton:EasyButton;
 		private var _publishedButton:EasyButton;
 		
+		private var _workOnVideoButton:EasyButton;
+		
 		private var _unreleasedScrollPane:ScrollPane;
 		private var _unreleasedVideoList:VideoList;
 		private var _releasedScrollPane:ScrollPane;
@@ -44,6 +47,8 @@ package com.animenight.igs.scenes.tabs
 			_unreleasedVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
 			_releasedVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
 			_seriesVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
+			_workOnVideoButton = new EasyButton("Work On Video (1 Hour)");
+			_workOnVideoButton.enabled = false;
 			
 			_unreleasedVideoList.addEventListener(NewVideoEvent.RELEASE_VIDEO, releaseVideo);
 			_seriesVideoList.addEventListener(NewVideoEvent.NEW_VIDEO, function(e:NewVideoEvent):void {
@@ -79,17 +84,24 @@ package com.animenight.igs.scenes.tabs
 			_publishedButton.addEventListener(MouseEvent.CLICK, publishedButtonClicked);
 			this.addChild(_publishedButton);
 			
+			_workOnVideoButton.x = 10 + SIDEBAR_WIDTH + 10;
+			_workOnVideoButton.y = 500 - _workOnVideoButton.height;
+			_workOnVideoButton.resizeBox(SCROLLPANE_WIDTH, _workOnVideoButton.height);
+			this.addChild(_workOnVideoButton);
+			_workOnVideoButton.addEventListener(MouseEvent.CLICK, workOnVideo);
+			
 			_unreleasedScrollPane = new ScrollPane();
 			_unreleasedScrollPane.x = 10 + SIDEBAR_WIDTH + 10;
 			_unreleasedScrollPane.y = 10;
 			_unreleasedScrollPane.width = SCROLLPANE_WIDTH;
-			_unreleasedScrollPane.height = 500 - _unreleasedScrollPane.y - 10;
+			_unreleasedScrollPane.height = 500 - _unreleasedScrollPane.y - 10 - _workOnVideoButton.height - 10;
 			_unreleasedScrollPane.drawBackground = false;
 			_unreleasedScrollPane.autoHideScrollBar = true;
 			this.addChild(_unreleasedScrollPane);
 			
 			_unreleasedVideoList.x = 0;
 			_unreleasedVideoList.y = 1;
+			_unreleasedVideoList.reversed = false;
 			_unreleasedScrollPane.addChild(_unreleasedVideoList);
 			
 			_releasedScrollPane = new ScrollPane();
@@ -131,6 +143,7 @@ package com.animenight.igs.scenes.tabs
 		public function newVideo(video:VideoProject):void
 		{
 			_unreleasedVideoList.addVideo(video);
+			_workOnVideoButton.enabled = true;
 			if (_unreleasedScrollPane != null)
 			{
 				_unreleasedScrollPane.update();
@@ -144,6 +157,16 @@ package com.animenight.igs.scenes.tabs
 			{
 				_seriesScrollPane.update();
 			}
+		}
+		
+		public function goToReleased():void
+		{
+			unreleasedButtonClicked(null);
+		}
+		
+		public function goToSeries():void
+		{
+			seriesButtonClicked(null);
 		}
 		
 		private function releaseVideo(e:NewVideoEvent):void
@@ -165,6 +188,7 @@ package com.animenight.igs.scenes.tabs
 			_unreleasedScrollPane.visible = false;
 			_releasedScrollPane.visible = false;
 			_seriesScrollPane.visible = true;
+			_workOnVideoButton.visible = _unreleasedScrollPane.visible;
 		}
 		
 		private function unreleasedButtonClicked(e:MouseEvent):void
@@ -177,6 +201,7 @@ package com.animenight.igs.scenes.tabs
 			_unreleasedScrollPane.visible = true;
 			_releasedScrollPane.visible = false;
 			_seriesScrollPane.visible = false;
+			_workOnVideoButton.visible = _unreleasedScrollPane.visible;
 		}
 		
 		private function publishedButtonClicked(e:MouseEvent):void
@@ -189,7 +214,31 @@ package com.animenight.igs.scenes.tabs
 			_unreleasedScrollPane.visible = false;
 			_releasedScrollPane.visible = true;
 			_seriesScrollPane.visible = false;
-
+			_workOnVideoButton.visible = _unreleasedScrollPane.visible;
+		}
+		
+		private function workOnVideo(e:MouseEvent):void
+		{
+			if (_player.hoursLeft < 1)
+			{
+				var evt:UIEvent = new UIEvent(UIEvent.TIME_NEEDED);
+				this.dispatchEvent(evt);
+				return;
+			}
+			var video:VideoProject = _player.latestUnfinishedVideo;
+			if (video.recordTime >= video.recordTimeSpecified)
+			{
+				video.editingTime++;
+			}
+			else
+			{
+				video.recordTime++;
+			}
+			_player.hoursLeft--;
+			if (!_player.latestUnfinishedVideo)
+				_workOnVideoButton.enabled = false;
+			var evt:UIEvent = new UIEvent(UIEvent.SHOULD_UPDATE);
+			this.dispatchEvent(evt);
 		}
 	}
 
