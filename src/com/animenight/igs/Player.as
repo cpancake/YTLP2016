@@ -1,6 +1,7 @@
 package com.animenight.igs 
 {
 	import com.animenight.igs.data.Jobs;
+	import com.animenight.igs.data.RandomEvents;
 	import com.animenight.igs.data.Upgrades;
 	import flash.media.Video;
 	/**
@@ -17,7 +18,7 @@ package com.animenight.igs
 		public var daysPlayed:Number = 0;
 		public var hoursLeft:Number = HOURS_AVAILABLE;
 		
-		public var rentPrice:Number = 80;
+		public var weeklyExpenses:Number = 250;
 		
 		public var recordExperience:Number = 0;
 		public var editExperience:Number = 0;
@@ -54,6 +55,8 @@ package com.animenight.igs
 			'middle_aged': 1 / 6,
 			'elderly': 1 / 6
 		};
+		
+		public var randomEvents:RandomEvents = new RandomEvents();
 		
 		public function Player(name:String = 'Default', isAi:Boolean = false) 
 		{
@@ -118,8 +121,7 @@ package com.animenight.igs
 		
 		public function jobPerformanceDecrease():Number
 		{
-			return (45 * workPosition) / 11 + 5;
+			return 50 - 3.75 * workPosition;
 		}
 	}
-
 }

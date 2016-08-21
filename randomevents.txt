@@ -4,7 +4,7 @@ Conditions: Subscribers > 5000, 5% chance per turn
 Only Once
 Flow:
 	Start: 
-		You're well on your way to becoming one of the internet's gaming greats! I mean, sure, some of your videos aren't the best, but you're trying your hardest, and that's what counts, right?
+		You're well on your way to becoming one of the internet's gaming greats! Sure, some of your videos aren't the best, but you're trying your hardest, and that's what counts, right?
 
 		Well, some people have a problem with it. Maybe it's the way that you're using a cheap camcorder to record your monitor. Maybe it's because you sound like you're eating your microphone. Or maybe it's because you save scum your way through bad romhacks of NES games.
 
@@ -58,22 +58,48 @@ Flow:
 				It's taken you a few hours, but at least somebody will be able to watch your video now.
 
 				* lose eight hours of the day, video is re-enabled *
-		Remove Content and Re-upload Video
+		Remove content and re-upload the video.
 			It takes a few hours, but you're able to remove the offending content and re-upload the video. Now you'll be able to enjoy all the views you were supposed to get.
 
 			* lose eight hours *
 
 Event: Reuploads
 Summary: Someone else is re-uploading your content to another channel.
+Conditions: Subscribers > 10000, 10% chance per turn
+Only Once
+Flow:
+	Start:
+		Congratulations! You're popular enough that someone has decided to go out of their way to take your content and put it on their channel! So, of course, you're not getting the views, subscribes, or ad money from these videos you made. What are you going to do about this?
+	Choices:
+		Get YouTube to take the channel down.
+			It took the entire day, but you were finally able to get through to YouTube and get them to take down the channel. Looks like a few people who watched the re-uploaded videos found their way to your channel, though, so at least you get something out of this!
 
-Event: Idiot Game Creator
-Summary: The creator of a game you've made videos of is being an idiot on Twitter.
+			* lose sixteen hours, extra 5% subscribers *
+		Ignore it.
+			* nothing happens *
 
 Event: Hack
 Summary: Someone has hacked your account and deleted a few of your videos.
+Conditions: Subscribers > 1000, 3% chance per turn
+Multiple Times, One Week Cooldown
+Flow:
+	Start:
+		There are some problems that come with being popular. Some people who are up to no good have been looking to get into your account, and one of them has managed to do it. You managed to get your account back, but it looks like they deleted a few of your recent videos.
 
+		* a few of your videos get deleted. that's it *
 Event: Drama
 Summary: You've been pulled into some internet drama you really don't want to be involved with.
+Conditions: Subscribers > 100000, 10% chance per turn
+Multiple Times, Two Week Cooldown
+Flow:
+	Start:
+		Some other YouTube superstars who run in the same circles that you do have drawn you into some drama you really don't want to be a part of. Are you going to try to back out of it, or will you join in?
+	Choices:
+		Join in.
+			TODO: write description
+
+			* lose 20% adult and middle aged, gain 10% children, teens, and young adults *
+		Try to back out.
 
 Event: Brigade
 Summary: Someone more popular is using their power to attack you and your videos.
@@ -83,3 +109,11 @@ Summary: Someone more popular than you gives you a shout-out in one of their vid
 
 Event: Ad Block
 Summary: Some of your viewers are using an ad blocker, so you're not making money from them.
+
+Event: Idiot Game Creator
+Summary: The creator of a game you've made videos of is being an idiot on Twitter.
+Conditions: Subscribers > 100, 10% chance per turn
+Multiple Times, Fifteen Day Cooldown
+Flow:
+	Start:
+		A developer of a game you've made videos of has been making some controversial statements on Twitter. 

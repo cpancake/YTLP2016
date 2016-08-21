@@ -66,6 +66,8 @@ package com.animenight.igs.scenes.tabs
 			}
 			_nextEditUpgrade.update();
 			_nextRecordUpgrade.update();
+			
+			_workButton.enabled = !_player.workedToday;
 		}
 		
 		private function addToStage(e:Event):void
@@ -232,6 +234,8 @@ package com.animenight.igs.scenes.tabs
 			}
 			this.dispatchEvent(evt);
 			this.dispatchEvent(new UIEvent(UIEvent.SHOULD_UPDATE));
+			
+			_workButton.enabled = false;
 		}
 		
 		private function upgradeBought(e:UIEvent):void

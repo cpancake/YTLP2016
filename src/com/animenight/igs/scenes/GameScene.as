@@ -248,11 +248,11 @@ package com.animenight.igs.scenes
 					showMessage("Fired!", "Due to your poor work performance, you've been fired!");
 				}
 			}
-			// rent
+			// weekly expenses
 			if (_player.daysPlayed > 1 && (_player.daysPlayed + 1) % 7 == 0)
 			{
-				_player.cash -= _player.rentPrice;
-				addCashChangeIndicator( -_player.rentPrice, "Rent");
+				_player.cash -= _player.weeklyExpenses;
+				addCashChangeIndicator( -_player.weeklyExpenses, "Weekly Expenses");
 				
 				if (_player.cash < 0)
 				{

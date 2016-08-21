@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<event>
+	<dialog id="start">
+		You're well on your way to becoming one of the internet's gaming greats! Sure, some of your videos aren't the best, but you're trying your hardest, and that's what counts, right?
+
+		Well, some people have a problem with it. Maybe it's the way that you're using a cheap camcorder to record your monitor. Maybe it's because you sound like you're eating your microphone. Or maybe it's because you save scum your way through bad romhacks of NES games.
+
+		Whatever the reason, a channel going by the name of "gretusprame" - run by the famous LPer duo of slowpork and tuberculosis - have taken it upon themselves to do a video riffing on one of yours. They can't do that, right?
+	</dialog>
+	<dialog id="choice_file_claim">
+		Your copyright claim against gretusprame is resolved in their favor. It turns out that, even if you did have a copyright on your video, making fun of it is covered under fair use. Who knew?
+
+		But while your frivolous claim didn't affect them, it's caused some of your more mature subscribers to decide they want nothing to do with you. Maybe you should learn to take criticism in stride?
+	</dialog>
+	<dialog id="choice_rally_fans">
+		You rally your fanbase to attack gretusprame for the heinous crime of making fun of you. While you manage to make a dent in their like/dislike ratio, and flood their comments with pointless drivel, you find out that they really don't care that much about being popular.
+
+		Though the adults among your fanbase thought it was petty of you, the diehard children among them only became more rabid. Maybe this will help make up for the loss in subscribers.
+	</dialog>
+	<dialog id="choice_do_nothing">
+		While it hurt your ego a little bit, the Gretusprame video blew over without any serious effects to your channel. Sure, some people you don't know think you're a terrible Let's Player, but they probably weren't going to be your fans anyways.
+
+		At least a few of those people thought you weren't terrible, so it seems you've gained a few subscribers from this.
+	</dialog>
+</event>
