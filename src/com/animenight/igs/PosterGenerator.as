@@ -28,6 +28,8 @@ package com.animenight.igs
 	 */
 	public class PosterGenerator 
 	{
+		public static const POSTER_RECT:Rectangle = new Rectangle(0, 0, 270, 381);
+		
 		//these fonts are really annoying me
 		//this is just a list of non-alphanumeric fonts on my computer
 		private static var _fontBlacklist:Array = [

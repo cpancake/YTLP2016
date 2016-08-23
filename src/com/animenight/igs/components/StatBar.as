@@ -91,11 +91,12 @@ package com.animenight.igs.components
 		
 		private function addedToStage(e:Event):void
 		{
+			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
+			
 			var width:int = this.stage.stageWidth;
 			var barHeight:int = 30;
 			
 			_bgRect = new Shape();
-			drawBackground(0xffffff);
 			_bgRect.graphics.beginFill(0x000000);
 			_bgRect.graphics.drawRect(0, 0, width, 1);
 			_bgRect.graphics.endFill();
@@ -144,6 +145,7 @@ package com.animenight.igs.components
 			_nextDayLabel.bold = true;
 			_nextDayLabel.update();
 			this.addChild(_nextDayLabel);
+			drawBackground(0xffffff);
 			
 			update();
 		}

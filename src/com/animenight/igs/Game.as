@@ -9,6 +9,7 @@ package com.animenight.igs
 	 */
 	public class Game 
 	{
+		public var gameId:String;
 		public var name:String;
 		public var isSequel:Boolean;
 		public var number:Number;
@@ -43,6 +44,7 @@ package com.animenight.igs
 			this.dayReleased = dayReleased;
 			this.genre = genre;
 			this.quality = quality;
+			this.gameId = Util.generateRandomString(10);
 		}
 		
 		public function getPopularity(day:Number):Number

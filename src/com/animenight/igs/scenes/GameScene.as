@@ -15,11 +15,15 @@ package com.animenight.igs.scenes
 	import com.animenight.igs.components.TabButton;
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
+	import flash.display.LoaderInfo;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.VideoEvent;
+	import flash.net.URLRequest;
+	import flash.system.Security;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	import flash.text.TextField;
@@ -41,18 +45,40 @@ package com.animenight.igs.scenes
 		private var _blackBox:Sprite;
 		private var _messageBox:MessageBox;
 		private var _videoBox:VideoBox;
+		private var _backgroundSprite:Background;
 		
 		private var _changeIndicators:Array = [];
+		private var _kongregate:*;
 		
-		private static var _staticPlayer:Player;
-		public static function get player():Player
+		public var currentlyCreatingNewSeriesVideo = false;
+		
+		public static var player:Player;
+		public static var gameScene:GameScene;
+		
+		public function get currentTab():String
 		{
-			return _staticPlayer;
+			return _currentTab;
+		}
+		
+		public function get currentGameSelected():Game
+		{
+			return _tabs["Games"].currentGame;
+		}
+		
+		public function get currentlyCreatingLPSeries():Boolean
+		{
+			return _tabs["Games"].currentlyCreatingLPSeries;
+		}
+		
+		public function get currentCommunityTab():String
+		{
+			return (_tabs["Community"] as CommunityTab).currentCommunityTab;
 		}
 		
 		public function GameScene(player:Player) 
 		{
-			_staticPlayer = _player = player;
+			GameScene.player = _player = player;
+			GameScene.gameScene = this;
 			this.mouseChildren = true;
 			var that = this;
 			
@@ -104,6 +130,9 @@ package com.animenight.igs.scenes
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			this.addEventListener(Event.ENTER_FRAME, updateChangeIndicators);
+			
+			_backgroundSprite = new Background();
+			this.addChild(_backgroundSprite);
 		}
 		
 		public function switchTab(tab:String):void
@@ -126,15 +155,11 @@ package com.animenight.igs.scenes
 		private function addedToStage(e:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStage);
-			var bg:Shape = new Shape();
-			bg.graphics.beginFill(0xffffff);
-			bg.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
-			bg.graphics.endFill();
-			this.addChild(bg);
 			
 			this.addChild(_tabBodyContainer);
-			
 			this.addChild(_statBar);
+			
+			loadKongregateApi();
 			
 			var daysFormat:TextFormat = new TextFormat('Open Sans', 24, 0x000000, true);
 			daysFormat.align = TextFormatAlign.LEFT;
@@ -166,6 +191,13 @@ package com.animenight.igs.scenes
 				this.addChild(_tabButtons[i]);
 			}
 			
+			if (!player.tutorialCompleted)
+			{
+				this.addChild(player.tutorial);
+				player.tutorial.addEventListener(MessageEvent.SHOW_CHOICE, showChoiceEvent);
+				player.tutorial.prompt();
+			}
+			
 			_blackBox = new Sprite();
 			_blackBox.graphics.beginFill(0x000000, 1);
 			_blackBox.graphics.drawRect(0, 0, this.stage.stageWidth, this.stage.stageHeight);
@@ -176,6 +208,26 @@ package com.animenight.igs.scenes
 			this.addChild(_blackBox);
 			
 			this.updateUI();
+		}
+		
+		private function loadKongregateApi():void
+		{
+			var paramObj:Object = LoaderInfo(root.loaderInfo).parameters;
+			var apiPath:String = paramObj.kongregate_api_path || "http://cdn1.kongregate.com/flash/API_AS3_Local.swf";
+			Security.allowDomain(apiPath);
+			
+			var request:URLRequest = new URLRequest(apiPath);
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, kongregateApiComplete);
+			loader.load(request);
+			this.addChild(loader);
+		}
+		
+		private function kongregateApiComplete(e:Event):void
+		{
+			_kongregate = e.target.content;
+			
+			_kongregate.services.connect();
 		}
 		
 		private function tabButtonClick(e:MouseEvent):void
@@ -251,16 +303,12 @@ package com.animenight.igs.scenes
 			// weekly expenses
 			if (_player.daysPlayed > 1 && (_player.daysPlayed + 1) % 7 == 0)
 			{
-				_player.cash -= _player.weeklyExpenses;
-				addCashChangeIndicator( -_player.weeklyExpenses, "Weekly Expenses");
+				_player.cash -= _player.WEEKLY_EXPENSES;
+				addCashChangeIndicator( -_player.WEEKLY_EXPENSES, "Weekly Expenses");
 				
-				if (_player.cash < 0)
+				if (_player.cash < 0 && _player.cash > -300)
 				{
-					showMessage("You Need Cash!", "You're low on cash. If you get below $-100, you'll go bankrupt!");
-				}
-				if (_player.cash < -100)
-				{
-					showMessage("Game Over!", "It's over bud.");
+					showMessage("You Need Cash!", "You're low on cash. If you get below $-300, you'll go bankrupt!");
 				}
 			}
 			// release new game
@@ -289,15 +337,47 @@ package com.animenight.igs.scenes
 				videoIncome += v.calculateDay(_player);
 				newViews += v.views - videoViews;
 			});
+			
 			if(videoIncome > 0)
 				addCashChangeIndicator(videoIncome, "Video Income");
+			
+			if (_player.cash < -300)
+			{
+				var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_CHOICE);
+				messageEvt.message = "You ran out of money. I'm sorry, but your YouTube dreams will just have to wait!";
+				messageEvt.title = "Game Over!";
+				messageEvt.buttons = ["Return To Menu"];
+				messageEvt.receiver = this;
+				this.addEventListener(MessageChoiceEvent.CHOICE, function(e:MessageChoiceEvent):void {
+					dispatchEvent(new UIEvent(UIEvent.RETURN_TO_MENU));
+				});
+				showChoiceEvent(messageEvt);
+			}
 			
 			var newSubs:Number = _player.subs - prevSubs;
 			_player.viewHistory.push(newViews);
 			_player.subscriberHistory.push(newSubs);
 			
 			_player.aiPlayers.calculateDay();
-				
+			_player.save();
+			
+			var indicator:ChangeIndicator = new ChangeIndicator("Game Saved", 0x000000);
+			indicator.x = this.stage.stageWidth - 10;
+			indicator.y = _statBar.topPosition - 25 - _changeIndicators.length * indicator.textHeight;
+			_changeIndicators.push(indicator);
+			this.addChild(indicator);
+			this.removeChild(_blackBox);
+			this.addChild(_blackBox);
+			
+			// submit stats
+			_kongregate.stats.submit("Cash", _player.cash);
+			_kongregate.stats.submit("Subs", _player.subs);
+			if (_player.daysPlayed == 30)
+			{
+				_kongregate.stats.submit("CashDay30", _player.cash);
+				_kongregate.stats.submit("SubsDay30", _player.subs);
+			}
+			
 			updateUI();
 		}
 		
@@ -357,6 +437,12 @@ package com.animenight.igs.scenes
 			// make sure _blackBox is on top of all children
 			this.removeChild(_blackBox);
 			this.addChild(_blackBox);
+			
+			if (!player.tutorialCompleted)
+			{
+				this.removeChild(player.tutorial);
+				this.addChild(player.tutorial);
+			}
 		}
 		
 		private function showBoxEvent(e:MessageEvent):void
@@ -378,6 +464,12 @@ package com.animenight.igs.scenes
 					e.receiver.dispatchEvent(evt);
 			});
 			this.addChild(messageBox);
+			
+			if (!player.tutorialCompleted)
+			{
+				this.removeChild(player.tutorial);
+				this.addChild(player.tutorial);
+			}
 		}
 		
 		private function showVideoEvent(e:MessageEvent):void
@@ -399,6 +491,12 @@ package com.animenight.igs.scenes
 			// make sure _blackBox is on top of all children
 			this.removeChild(_blackBox);
 			this.addChild(_blackBox);
+			
+			if (!player.tutorialCompleted)
+			{
+				this.removeChild(player.tutorial);
+				this.addChild(player.tutorial);
+			}
 		}
 		
 		private function showNewVideoEvent(e:MessageEvent):void
@@ -417,6 +515,12 @@ package com.animenight.igs.scenes
 					e.receiver.dispatchEvent(evt);
 			});
 			this.addChild(messageBox);
+			
+			if (!player.tutorialCompleted)
+			{
+				this.removeChild(player.tutorial);
+				this.addChild(player.tutorial);
+			}
 		}
 		
 		/*

@@ -51,6 +51,21 @@ package com.animenight.igs
 		}
 		
 		[Inline]
+		public static function easeInOutBack(t:Number, s:Number = 1.70158):Number
+		{
+			t *= 2;
+			if( t < 1 ) {
+				s *= 1.525;
+				return 0.5*(t*t*((s+1)*t - s));
+			}
+			else {
+				t -= 2;
+				s *= 1.525;
+				return 0.5*(t*t*((s+1)*t+ s) + 2);
+			}
+		}
+		
+		[Inline]
 		public static function randomArrayItem(a:Array):Object
 		{
 			return a[Math.floor(Math.random() * a.length)];
@@ -161,6 +176,12 @@ package com.animenight.igs
 		public static function randomer():Number
 		{
 			return randomSeed() / 0xffffffff;
+		}
+		
+		[Inline]
+		public static function randomRange(min:Number, max:Number):Number
+		{
+			return min + Math.random() * (max - min);
 		}
 		
 		[Inline]

@@ -273,6 +273,7 @@ package com.animenight.igs.components
 		
 		private function newSeriesVideo(e:MouseEvent):void
 		{
+			GameScene.gameScene.currentlyCreatingNewSeriesVideo = true;
 			e.stopImmediatePropagation();
 			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_NEW_VIDEO, true);
 			messageEvt.receiver = this;
@@ -310,7 +311,6 @@ package com.animenight.igs.components
 				}
 			});
 			this.dispatchEvent(messageEvt);
-			trace(messageEvt);
 		}
 		
 		private function isVideoDone():Boolean

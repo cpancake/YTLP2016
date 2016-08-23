@@ -34,6 +34,7 @@ package com.animenight.igs.scenes.tabs
 		private var _games:List;
 		private var _gameQuality:Sprite;
 		private var _currentGame:Game;
+		private var _currentlyCreatingLPSeries:Boolean = false;
 		
 		private var _title:EasyTextField;
 		private var _company:EasyTextField;
@@ -52,6 +53,16 @@ package com.animenight.igs.scenes.tabs
 		
 		private var _star:Bitmap = new _starClass();
 		private var _starDim:Bitmap = new _starDimClass();
+		
+		public function get currentGame():Game
+		{
+			return _currentGame;
+		}
+		
+		public function get currentlyCreatingLPSeries():Boolean
+		{
+			return _currentlyCreatingLPSeries;
+		}
 		
 		public function GamesTab(player:Player) 
 		{
@@ -117,10 +128,12 @@ package com.animenight.igs.scenes.tabs
 			this.addChild(_daysAgo);
 			
 			_games = new List();
+			_games.defaultColor = 0xffffff;
 			_games.x = 540;
 			_games.y = 20;
 			_games.width = 250;
 			_games.height = 400;
+			_games.setSize(250, 400);
 			_games.selectedIndex = 0;
 			_games.addEventListener(Event.SELECT, gameSelectionChanged);
 			this.addChild(_games);
@@ -214,6 +227,7 @@ package com.animenight.igs.scenes.tabs
 		
 		private function makeVideo(e:MouseEvent):void
 		{
+			_currentlyCreatingLPSeries = true;
 			var messageEvt:MessageEvent = new MessageEvent(MessageEvent.SHOW_INPUT);
 			messageEvt.message = "Please enter the name for a new video series based on \"" + _currentGame.name + "\"";
 			messageEvt.title = "New Video";
@@ -288,6 +302,7 @@ package com.animenight.igs.scenes.tabs
 			
 			_gameQuality.x = _qualityLabel.x + _qualityLabel.textWidth + 5;
 			_gameQuality.y = _qualityLabel.y + 1;
+			_gameQuality.graphics.clear();
 			_gameQuality.graphics.beginBitmapFill(_starDim.bitmapData, null, true, false);
 			_gameQuality.graphics.drawRect(0, 0, 5 * _starDim.width, _starDim.height);
 			_gameQuality.graphics.endFill();

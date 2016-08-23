@@ -1,5 +1,6 @@
 package com.animenight.igs 
 {
+	import flash.display3D.textures.RectangleTexture;
 	import flash.geom.Rectangle;
 	import flash.geom.Matrix;
 	import com.animenight.igs.components.EasyTextField;
@@ -16,6 +17,8 @@ package com.animenight.igs
 	 */
 	public class ThumbnailGenerator 
 	{
+		public static const THUMBNAIL_RECT:Rectangle = new Rectangle(0, 0, 250, 150);
+		
 		private static var _numberFonts:Array = [
 			"Arial",
 			"Arial Black",

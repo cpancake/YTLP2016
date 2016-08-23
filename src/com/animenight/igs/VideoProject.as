@@ -1,9 +1,15 @@
 package com.animenight.igs 
 {
+	import com.adobe.images.PNGEncoder;
 	import com.animenight.igs.data.Communities;
 	import com.animenight.igs.data.FanGroups;
 	import com.animenight.igs.data.Genres;
+	import com.animenight.igs.scenes.GameScene;
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display3D.textures.RectangleTexture;
+	import flash.geom.Rectangle;
+	import flash.utils.ByteArray;
 	/**
 	 * ...
 	 * @author Andrew Rogers
@@ -32,20 +38,22 @@ package com.animenight.igs
 		public var viewsToday:Number = 0;
 		
 		public var aiThumbnail:Bitmap;
-		public var aiPlayer:Player;
 		public var aiDescription:String;
 		
 		public var videos:Array = [];
 		public var communities:Object = {};
+		public var isMagic:Boolean = false;
 		
 		// the decimal points, rounded off until we can get a full number
 		private var _withheldIncome:Number = 0;
+		private var _aiPlayerName:String;
 		
 		public function VideoProject(review:Boolean, name:String, game:Game) 
 		{
 			this.isReview = review;
 			this.name = name;
 			this.game = game;
+			this.isMagic = Math.random() < 0.05;
 		}
 		
 		public function get isLP():Boolean
@@ -56,6 +64,134 @@ package com.animenight.igs
 		public function set isLP(val:Boolean):void
 		{
 			this.isReview = !val;
+		}
+		
+		public function get aiPlayer():Player
+		{
+			return GameScene.player.aiPlayers.playerFromName(_aiPlayerName);
+		}
+		
+		public function set aiPlayer(val:Player):void
+		{
+			_aiPlayerName = val.name;
+		}
+		
+		public static function readVideo(player:Player, input:ByteArray):VideoProject
+		{
+			var gameId:String = input.readUTF();
+			var name:String = input.readUTF();
+			var videoId:String = input.readUTF();
+			var day:uint = input.readUnsignedInt();
+			var isReview:Boolean = input.readBoolean();
+			var isSeries:Boolean = input.readBoolean();
+			var released:Boolean = input.readBoolean();
+			var inSeries:Boolean = input.readBoolean();
+			
+			var video:VideoProject = new VideoProject(isReview, name, player.games.gameFromId(gameId));
+			video.id = videoId;
+			video.day = day;
+			video.isSeries = isSeries;
+			video.released = released;
+			video.inSeries = inSeries;
+			video.seriesNum = input.readUnsignedInt();
+			video.recordTime = input.readUnsignedInt();
+			video.editingTime = input.readUnsignedInt();
+			video.recordTimeSpecified = input.readUnsignedInt();
+			video.editingTimeSpecified = input.readUnsignedInt();
+			video.views = input.readUnsignedInt();
+			video.likes = input.readUnsignedInt();
+			video.dislikes = input.readUnsignedInt();
+			video.totalIncome = input.readDouble();
+			video.viewsToday = input.readUnsignedInt();
+			video.isMagic = input.readBoolean();
+			if (input.readBoolean())
+			{
+				video._aiPlayerName = input.readUTF();
+				video.aiDescription = input.readUTF();
+				if (video.aiDescription == "")
+				{
+					video.aiDescription = null;
+				}
+			}
+			
+			if (input.readBoolean())
+			{
+				var dataLength:uint = input.readUnsignedInt();
+				var data:BitmapData = new BitmapData(ThumbnailGenerator.THUMBNAIL_RECT.width, ThumbnailGenerator.THUMBNAIL_RECT.height);
+				var pixelData:ByteArray = new ByteArray();
+				input.readBytes(pixelData, 0, dataLength);
+				data.setPixels(ThumbnailGenerator.THUMBNAIL_RECT, pixelData);
+				video.aiThumbnail = new Bitmap(data);
+			}
+			
+			var videoCount:Number = input.readUnsignedInt();
+			video.videos = [];
+			for (var i:Number = 0; i < videoCount; i++)
+			{
+				video.videos.push(VideoProject.readVideo(player, input));
+			}
+			
+			video.communities = {};
+			var communityCount:Number = input.readUnsignedInt();
+			for (var i:Number = 0; i < communityCount; i++)
+			{
+				video.communities[input.readUTF()] = input.readBoolean();
+			}
+			
+			return video;
+		}
+		
+		public function writeVideo(output:ByteArray):void
+		{
+			output.writeUTF(game.gameId);
+			output.writeUTF(name);
+			output.writeUTF(id);
+			output.writeUnsignedInt(day);
+			output.writeBoolean(isReview);
+			output.writeBoolean(isSeries);
+			output.writeBoolean(released);
+			output.writeBoolean(inSeries);
+			output.writeUnsignedInt(seriesNum);
+			output.writeUnsignedInt(recordTime);
+			output.writeUnsignedInt(editingTime);
+			output.writeUnsignedInt(recordTimeSpecified);
+			output.writeUnsignedInt(editingTimeSpecified);
+			output.writeUnsignedInt(views);
+			output.writeUnsignedInt(likes);
+			output.writeUnsignedInt(dislikes);
+			output.writeDouble(totalIncome);
+			output.writeUnsignedInt(viewsToday);
+			output.writeBoolean(isMagic);
+			output.writeBoolean(aiPlayer != null);
+			if (aiPlayer != null)
+			{
+				output.writeUTF(aiPlayer.name);
+				output.writeUTF(aiDescription || "");
+			}
+			
+			output.writeBoolean(aiThumbnail != null);
+			if (aiThumbnail != null)
+			{
+				//output.writeBytes(PNGEncoder.encode(aiThumbnail.bitmapData));
+				var bytes:ByteArray = aiThumbnail.bitmapData.getPixels(ThumbnailGenerator.THUMBNAIL_RECT);
+				output.writeUnsignedInt(bytes.length);
+				output.writeBytes(bytes);
+			}
+			
+			output.writeUnsignedInt(videos.length);
+			for (var i:Number = 0; i < videos.length; i++)
+			{
+				var video:VideoProject = videos[i];
+				video.writeVideo(output);
+			}
+			
+			var communityKeys:Array = Util.objectKeys(communities);
+			output.writeUnsignedInt(communityKeys.length);
+			for (var i:Number = 0; i < communityKeys.length; i++)
+			{
+				output.writeUTF(communityKeys[i]);
+				output.writeBoolean(communities[communityKeys[i]]);
+			}
 		}
 		
 		public function income(newViews:Number):Number
@@ -108,10 +244,16 @@ package com.animenight.igs
 			var newViews:Number = 
 				5 +
 				communityBoost +
-				(subsYetToSee(daysSinceRelease) * player.subs * (0.5 * (Math.random() * 0.25))) * 
+				(subsYetToSee(daysSinceRelease) * player.subs * 0.5 * (0.5 * Math.random())) * 
 				videoQuality * 
 				totalMult * 
 				(game.getPopularity(player.daysPlayed) / 5);
+				
+			if (isMagic)
+			{
+				newViews = Math.floor((newViews > 100 ? newViews : 50) * 5 + Math.random() * 10);
+			}
+			
 			if (inSeries)
 			{
 				if (game.tripleA)

@@ -43,8 +43,9 @@ package com.animenight.igs.scenes.tabs
 		private var _infoTextField:EasyTextField;
 		
 		private var _topVideosList:TopVideosList;
-		
 		private var _communityButtonUpdates:Array = [];
+		
+		public var currentCommunityTab:String = "Your Channel";
 		
 		public function CommunityTab(player:Player) 
 		{
@@ -250,6 +251,8 @@ package com.animenight.igs.scenes.tabs
 		
 		private function channelButtonClicked(e:MouseEvent):void
 		{
+			currentCommunityTab = "Your Channel";
+			
 			_channelButton.enabled = false;
 			_internetButton.enabled = true;
 			_topVideosButton.enabled = true;
@@ -261,6 +264,8 @@ package com.animenight.igs.scenes.tabs
 		
 		private function internetButtonClicked(e:MouseEvent):void
 		{
+			currentCommunityTab = "Internet";
+			
 			_channelButton.enabled = true;
 			_internetButton.enabled = false;
 			_topVideosButton.enabled = true;
@@ -272,6 +277,8 @@ package com.animenight.igs.scenes.tabs
 		
 		private function topVideosButtonClicked(e:MouseEvent):void
 		{
+			currentCommunityTab = "Top Videos";
+			
 			_channelButton.enabled = true;
 			_internetButton.enabled = true;
 			_topVideosButton.enabled = false;

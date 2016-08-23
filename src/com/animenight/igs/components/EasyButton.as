@@ -55,6 +55,7 @@ package com.animenight.igs.components
 		public function set text(value:String):void
 		{
 			_label.text = value;
+			_label.update();
 			draw();
 		}
 		
@@ -97,7 +98,7 @@ package com.animenight.igs.components
 		private function draw():void
 		{
 			this.graphics.clear();
-			GraphicsExtensions.drawBorderedRect(this.graphics, 0, 0, _label.width + PADDING * 2, _label.height + PADDING * 2, 0x000000, _color);
+			GraphicsExtensions.drawRoundedBorderedRect(this.graphics, 0, 0, _label.width + PADDING * 2, _label.height + PADDING * 2, 0x000000, _color);
 		}
 	}
 

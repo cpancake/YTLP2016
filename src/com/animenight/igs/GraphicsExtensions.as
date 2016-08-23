@@ -17,6 +17,17 @@ package com.animenight.igs
 			graphics.drawRect(x + 1, y + 1, width - 2, height - 2);
 			graphics.endFill();
 		}
+		
+		public static function drawRoundedBorderedRect(graphics:Graphics, x:int, y:int, width:int, height:int, borderColor:uint, bgColor:uint)
+		{
+			graphics.beginFill(borderColor);
+			graphics.drawRoundRect(x, y, width, height, 10, 10);
+			graphics.endFill();
+			
+			graphics.beginFill(bgColor);
+			graphics.drawRoundRect(x + 1, y + 1, width - 2, height - 2, 8, 8);
+			graphics.endFill();
+		}
 	}
 
 }

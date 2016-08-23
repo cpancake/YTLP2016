@@ -1,5 +1,6 @@
 package com.animenight.igs.events 
 {
+	import com.animenight.igs.Player;
 	import flash.events.Event;
 	
 	/**
@@ -14,9 +15,12 @@ package com.animenight.igs.events
 		public static const UPGRADE_BOUGHT:String = "upgradeBought";
 		public static const GO_TO_UNRELEASED:String = "goToUnreleased";
 		public static const GO_TO_SERIES:String = "goToSeries";
+		public static const PLAYER_START:String = "playerStart";
+		public static const RETURN_TO_MENU:String = "returnToMenu";
 		
 		public var cashAmount:Number = 0;
 		public var cashSource:String = "none";
+		public var player:Player = null;
 		
 		public function UIEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) 
 		{ 

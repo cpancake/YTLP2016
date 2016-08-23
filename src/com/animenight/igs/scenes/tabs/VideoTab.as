@@ -46,7 +46,29 @@ package com.animenight.igs.scenes.tabs
 			this.addEventListener(Event.ADDED_TO_STAGE, addedToStage);
 			_unreleasedVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
 			_releasedVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
+			if (player.videoProjects.length > 0)
+			{
+				player.videoProjects.forEach(function(s:VideoProject, _, __) {
+					if (s.released)
+					{
+						_releasedVideoList.addVideo(s);
+					}
+					else
+					{
+						_unreleasedVideoList.addVideo(s);
+					}
+				});
+				_releasedVideoList.updatePositions();
+				_unreleasedVideoList.updatePositions();
+			}
 			_seriesVideoList = new VideoList(SCROLLPANE_WIDTH - 20);
+			if (player.series.length > 0)
+			{
+				player.series.forEach(function(s:VideoProject, _, __) { 
+					_seriesVideoList.addVideo(s);
+				});
+				_seriesVideoList.updatePositions();
+			}
 			_workOnVideoButton = new EasyButton("Work On Video (1 Hour)");
 			_workOnVideoButton.enabled = false;
 			

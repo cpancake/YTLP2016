@@ -203,6 +203,9 @@ package com.bit101.components
 			// panel
 			_panel.setSize(_width, _height);
 			_panel.color = _defaultColor;
+			_panel.graphics.beginFill(0xffffff);
+			_panel.graphics.drawRect(0, 0, _width, _height);
+			_panel.graphics.endFill();
 			_panel.draw();
 			
 			// scrollbar
