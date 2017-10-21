@@ -211,7 +211,12 @@ package com.animenight.igs
 				videoQuality *= 0.75;
 				videoQuality += (game.quality * 0.25); 
 			}
-			return Math.max(0, videoQuality);
+			return Math.min(1, Math.max(0, videoQuality));
+		}
+		
+		public function engagement(player:Player):Number
+		{
+			return Math.max(0.1, 1 - 9 * Math.pow(10, -7) * player.subs);
 		}
 		
 		public function calculateDay(player:Player):Number
@@ -244,7 +249,7 @@ package com.animenight.igs
 			var newViews:Number = 
 				5 +
 				communityBoost +
-				(subsYetToSee(daysSinceRelease) * player.subs * 0.5 * (0.5 * Math.random())) * 
+				(subsYetToSee(daysSinceRelease) * player.subs * 0.5 * (0.5 * Math.random()) * engagement(player)) * 
 				videoQuality * 
 				totalMult * 
 				(game.getPopularity(player.daysPlayed) / 5);
